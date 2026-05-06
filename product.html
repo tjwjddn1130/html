@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주요제품 - (주)비에이텍</title>
+    <meta name="description" content="(주)비에이텍의 뛰어난 성능과 내구성을 자랑하는 워터펌프 제품들을 소개합니다.">
+
+    <!-- Google Fonts & Original CSS for Header/Footer -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        deepBlue: '#001E3C',
+                        skyBlue: '#3B82F6',
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Tailwind Utilities Overrides for Header & Footer (to protect styles.css) */
+        #main-header,
+        #main-footer {
+            /* Protect typography reset by Tailwind */
+        }
+
+        /* Tab Styles */
+        .tab-btn {
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            border-bottom-color: #3B82F6;
+            color: #3B82F6;
+            font-weight: 700;
+        }
+
+        .product-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Product Sub-Hero override */
+        #sub-hero {
+            height: 40vh;
+            min-height: 300px;
+            background-image: url('../../brain/8a0e734f-0c42-4d3d-957e-b61c8758d4f0/hero_clean_water_1778050218978.png');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Header (Navigation) - Inherited from styles.css -->
+    <header id="main-header" class="scrolled">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="index.html">
+                    <span class="logo-icon">💧</span>
+                    <span class="logo-text">(주)비에이텍</span>
+                </a>
+            </div>
+            <nav id="main-nav">
+                <ul>
+                    <li><a href="intro.html" class="nav-link">기업소개</a></li>
+                    <li><a href="product.html" class="nav-link">주요제품</a></li>
+                    <li><a href="equipment.html" class="nav-link">장비</a></li>
+                    <li><a href="sales_history.html" class="nav-link">업력</a></li>
+                    <li><a href="map.html" class="nav-link">찾아오시는 길</a></li>
+                    <li><a href="inquiry.html" class="nav-link btn-inquiry">문의하기</a></li>
+                </ul>
+            </nav>
+            <div class="mobile-menu-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Subpage Hero -->
+    <section id="sub-hero">
+        <div class="hero-overlay"
+            style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0, 30, 60, 0.8) 0%, rgba(59, 130, 246, 0.6) 100%);">
+        </div>
+        <div class="relative z-10 text-center text-white fade-in-up mt-16">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 drop-shadow-lg">주요 제품</h1>
+            <p class="text-lg opacity-90">최상의 기술력으로 완성된 비에이텍의 펌프 솔루션</p>
+        </div>
+    </section>
+
+    <!-- Product Content using Tailwind CSS -->
+    <main class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+
+        <!-- Section Header -->
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-deepBlue mb-4 relative inline-block">
+                Our Products
+                <span
+                    class="absolute bottom-[-10px] left-1/2 transform -translate-x-1/2 w-16 h-1 bg-skyBlue rounded-full"></span>
+            </h2>
+            <p class="text-gray-500 mt-6">산업 현장부터 가정까지, 용도에 맞는 최적의 펌프를 확인해보세요.</p>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="flex flex-wrap justify-center gap-4 border-b border-gray-200 mb-10">
+            <button class="tab-btn active px-6 py-3 text-gray-600 font-medium hover:text-skyBlue focus:outline-none"
+                onclick="filterCategory('all')">전체보기</button>
+            <button class="tab-btn px-6 py-3 text-gray-600 font-medium hover:text-skyBlue focus:outline-none"
+                onclick="filterCategory('industrial')">산업용</button>
+            <button class="tab-btn px-6 py-3 text-gray-600 font-medium hover:text-skyBlue focus:outline-none"
+                onclick="filterCategory('residential')">가정용</button>
+            <button class="tab-btn px-6 py-3 text-gray-600 font-medium hover:text-skyBlue focus:outline-none"
+                onclick="filterCategory('wastewater')">오폐수용</button>
+            <button class="tab-btn px-6 py-3 text-gray-600 font-medium hover:text-skyBlue focus:outline-none"
+                onclick="filterCategory('parts')">펌프 부품</button>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8" id="product-grid">
+
+            <!-- Product 1 (Industrial) -->
+            <div class="product-card bg-white rounded-xl overflow-hidden border border-gray-100 flex flex-col"
+                data-category="industrial">
+                <div class="relative h-56 bg-gray-100 flex items-center justify-center p-4">
+                    <img src="../../brain/8a0e734f-0c42-4d3d-957e-b61c8758d4f0/industrial_pump_1778051020577.png"
+                        alt="고효율 산업용 펌프" class="max-h-full object-contain">
+                    <span
+                        class="absolute top-3 left-3 bg-deepBlue text-white text-xs font-bold px-2 py-1 rounded">산업용</span>
+                </div>
+                <div class="p-6 flex-1 flex flex-col">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">대형 입형 다단 펌프</h3>
+                    <ul class="text-sm text-gray-600 mb-6 space-y-1 flex-1">
+                        <li><i class="fa-solid fa-check text-skyBlue mr-2"></i>최대 유량: 200m³/h</li>
+                        <li><i class="fa-solid fa-check text-skyBlue mr-2"></i>최고 양정: 150m</li>
+                        <li><i class="fa-solid fa-check text-skyBlue mr-2"></i>적용: 고층 빌딩 급수, 공업용수</li>
+                    </ul>
+                    <div class="space-y-3 mt-auto">
+                        <a href="#"
+                            class="block w-full text-center border border-skyBlue text-skyBlue hover:bg-skyBlue hover:text-white transition-colors py-2 rounded-lg text-sm font-medium">
+                            <i class="fa-solid fa-file-pdf mr-1"></i> 카탈로그 다운로드
+                        </a>
+                        <a href="inquiry.html"
+                            class="block w-full text-center bg-deepBlue text-white hover:bg-blue-900 transition-colors py-2.5 rounded-lg text-sm font-bold shadow-md">
+                            <i class="fa-solid fa-envelope mr-1"></i> 이 제품에 대해 문의하기
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 2 (Residential) -->
+            <div class="product-card bg-white rounded-xl overflow-hidden border border-gray-100 flex flex-col"
+                data-category="residential">
+                <div class="relative h-56 bg-gray-100 flex items-center justify-center p-4">
+                    <img src="../../brain/8a0e734f-0c42-4d3d-957e-b61c8758d4f0/industrial_pump_1778051020577.png"
+                        alt="저소음 가정용 가압펌프" class="max-h-full object-contain" style="filter: hue-rotate(45deg);">
+                    <span
+                        class="absolute top-3 left-3 bg-skyBlue text-white text-xs font-bold px-2 py-1 rounded">가정용</span>
+                </div>
+                <div class="p-6 flex-1 flex flex-col">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">저소음 스마트 가압펌프</h3>
+                    <ul class="text-sm text-gray-600 mb-6 space-y-1 flex-1">
+                        <li><i class="fa-solid fa-check text-skyBlue mr-2"></i>인버터 제어 방식</li>
+                        <li><i class="fa-solid fa-check text-skyBlue mr-2"></i>극저소음 설계 (45dB 이하)</li>
+                        <li><i class="fa-solid fa-check text-skyBlue mr-2"></i>적용: 가정용 가압, 소형 상가</li>
+                    </ul>
+                    <div class="space-y-3 mt-auto">
+                        <a href="#"
+                            class="block w-full text-center border border-skyBlue text-skyBlue hover:bg-skyBlue hover:text-white transition-colors py-2 rounded-lg text-sm font-medium">
+                            <i class="fa-solid fa-file-pdf mr-1"></i> 카탈로그 다운로드
+                        </a>
+                        <a href="inquiry.html"
+                            class="block w-full text-center bg-deepBlue text-white hover:bg-blue-900 transition-colors py-2.5 rounded-lg text-sm font-bold shadow-md">
+                            <i class="fa-solid fa-envelope mr-1"></i> 이 제품에 대해 문의하기
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 3 (Wastewater) -->
+            <div class="product-card bg-white rounded-xl overflow-hidden border border-gray-100 flex flex-col"
+                data-category="wastewater">
+                <div class="relative h-56 bg-gray-100 flex items-center justify-center p-4">
+                    <img src="../../brain/8a0e734f-0c42-4d3d-957e-b61c8758d4f0/industrial_pump_1778051020577.png"
+                        alt="수중 오폐수 펌프" class="max-h-full object-contain" style="filter: grayscale(80%);">
+                    <span
+                        class="absolute top-3 left-3 bg-gray-600 text-white text-xs font-bold px-2 py-1 rounded">오폐수용</span>
+                </div>
+                <div class="p-6 flex-1 flex flex-col">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">고점성 수중 오폐수 펌프</h3>
+                    <ul class="text-sm text-gray-600 mb-6 space-y-1 flex-1">
+                        <li><i class="fa-solid fa-check text-skyBlue mr-2"></i>논클로깅(Non-clogging) 임펠러</li>
+                        <li><i class="fa-solid fa-check text-skyBlue mr-2"></i>강력한 이물질 통과 능력</li>
+                        <li><i class="fa-solid fa-check text-skyBlue mr-2"></i>적용: 하수처리장, 공장 폐수</li>
+                    </ul>
+                    <div class="space-y-3 mt-auto">
+                        <a href="#"
+                            class="block w-full text-center border border-skyBlue text-skyBlue hover:bg-skyBlue hover:text-white transition-colors py-2 rounded-lg text-sm font-medium">
+                            <i class="fa-solid fa-file-pdf mr-1"></i> 카탈로그 다운로드
+                        </a>
+                        <a href="inquiry.html"
+                            class="block w-full text-center bg-deepBlue text-white hover:bg-blue-900 transition-colors py-2.5 rounded-lg text-sm font-bold shadow-md">
+                            <i class="fa-solid fa-envelope mr-1"></i> 이 제품에 대해 문의하기
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 4 (Industrial) -->
+            <div class="product-card bg-white rounded-xl overflow-hidden border border-gray-100 flex flex-col"
+                data-category="industrial">
+                <div class="relative h-56 bg-gray-100 flex items-center justify-center p-4">
+                    <img src="../../brain/8a0e734f-0c42-4d3d-957e-b61c8758d4f0/industrial_pump_1778051020577.png"
+                        alt="대용량 양흡입 펌프" class="max-h-full object-contain" style="transform: scaleX(-1);">
+                    <span
+                        class="absolute top-3 left-3 bg-deepBlue text-white text-xs font-bold px-2 py-1 rounded">산업용</span>
+                </div>
+                <div class="p-6 flex-1 flex flex-col">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">대용량 양흡입 펌프</h3>
+                    <ul class="text-sm text-gray-600 mb-6 space-y-1 flex-1">
+                        <li><i class="fa-solid fa-check text-skyBlue mr-2"></i>탁월한 흡입 성능</li>
+                        <li><i class="fa-solid fa-check text-skyBlue mr-2"></i>진동 및 소음 최소화 구조</li>
+                        <li><i class="fa-solid fa-check text-skyBlue mr-2"></i>적용: 취수장, 상수도 시설</li>
+                    </ul>
+                    <div class="space-y-3 mt-auto">
+                        <a href="#"
+                            class="block w-full text-center border border-skyBlue text-skyBlue hover:bg-skyBlue hover:text-white transition-colors py-2 rounded-lg text-sm font-medium">
+                            <i class="fa-solid fa-file-pdf mr-1"></i> 카탈로그 다운로드
+                        </a>
+                        <a href="inquiry.html"
+                            class="block w-full text-center bg-deepBlue text-white hover:bg-blue-900 transition-colors py-2.5 rounded-lg text-sm font-bold shadow-md">
+                            <i class="fa-solid fa-envelope mr-1"></i> 이 제품에 대해 문의하기
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 5 (Parts) -->
+            <div class="product-card bg-white rounded-xl overflow-hidden border border-gray-100 flex flex-col"
+                data-category="parts">
+                <div class="relative h-56 bg-gray-100 flex items-center justify-center p-4">
+                    <img src="../../brain/8a0e734f-0c42-4d3d-957e-b61c8758d4f0/industrial_pump_1778051020577.png"
+                        alt="고정밀 메카니컬 씰" class="max-h-full object-contain"
+                        style="filter: sepia(50%) hue-rotate(180deg) scale(0.8);">
+                    <span class="absolute top-3 left-3 bg-indigo-500 text-white text-xs font-bold px-2 py-1 rounded">펌프
+                        부품</span>
+                </div>
+                <div class="p-6 flex-1 flex flex-col">
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">고정밀 메카니컬 씰</h3>
+                    <ul class="text-sm text-gray-600 mb-6 space-y-1 flex-1">
+                        <li><i class="fa-solid fa-check text-skyBlue mr-2"></i>특수 합금 소재 적용</li>
+                        <li><i class="fa-solid fa-check text-skyBlue mr-2"></i>완벽한 누수 방지</li>
+                        <li><i class="fa-solid fa-check text-skyBlue mr-2"></i>적용: 모든 산업용 펌프 규격</li>
+                    </ul>
+                    <div class="space-y-3 mt-auto">
+                        <a href="#"
+                            class="block w-full text-center border border-skyBlue text-skyBlue hover:bg-skyBlue hover:text-white transition-colors py-2 rounded-lg text-sm font-medium">
+                            <i class="fa-solid fa-file-pdf mr-1"></i> 사양서 다운로드
+                        </a>
+                        <a href="inquiry.html"
+                            class="block w-full text-center bg-deepBlue text-white hover:bg-blue-900 transition-colors py-2.5 rounded-lg text-sm font-bold shadow-md">
+                            <i class="fa-solid fa-envelope mr-1"></i> 부품 호환 문의하기
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer - Inherited from styles.css -->
+    <footer id="main-footer" class="mt-20">
+        <div class="container footer-container">
+            <div class="footer-info">
+                <div class="footer-logo">
+                    <span class="logo-icon">💧</span>
+                    <span class="logo-text">(주)비에이텍</span>
+                </div>
+                <p class="company-desc">워터펌프 제작, 설치, 수리 전문기업</p>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                <ul>
+                    <li><strong>전화:</strong> 033-248-1111</li>
+                    <li><strong>팩스:</strong> 033-248-1234</li>
+                    <li><strong>이메일:</strong> aaa@naver.com</li>
+                    <li><strong>주소:</strong> 춘천시 퇴계로 1번지</li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="intro.html">기업소개</a></li>
+                    <li><a href="product.html">주요제품</a></li>
+                    <li><a href="equipment.html">장비</a></li>
+                    <li><a href="map.html">찾아오시는 길</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2026 (주)비에이텍 All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Original Scripts -->
+    <script src="script.js"></script>
+
+    <!-- Tab Filter Script -->
+    <script>
+        function filterCategory(category) {
+            // Update active tab styling
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            // Filter products
+            const products = document.querySelectorAll('.product-card');
+            products.forEach(product => {
+                if (category === 'all' || product.dataset.category === category) {
+                    product.style.display = 'flex';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
