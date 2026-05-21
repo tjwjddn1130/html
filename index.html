@@ -73,24 +73,21 @@
                 </div>
 
                 <!-- Desktop Navigation Menu -->
-                <nav class="hidden md:flex space-x-4 lg:space-x-6 text-sm font-semibold text-slate-600" id="desktop-nav">
-                    <button onclick="navigateTo('home')" class="nav-btn px-2 py-2 hover:text-water-600 transition-colors active-nav-link" id="nav-btn-home">홈</button>
-                    <button onclick="navigateTo('about')" class="nav-btn px-2 py-2 hover:text-water-600 transition-colors" id="nav-btn-about">회사소개</button>
-                    <button onclick="navigateTo('products')" class="nav-btn px-2 py-2 hover:text-water-600 transition-colors" id="nav-btn-products">제품소개</button>
-                    <button onclick="navigateTo('advertisement')" class="nav-btn px-2 py-2 hover:text-water-600 transition-colors" id="nav-btn-advertisement">광고영상</button>
-                    <button onclick="navigateTo('brochure')" class="nav-btn px-2 py-2 hover:text-water-600 transition-colors" id="nav-btn-brochure">디지털 브로슈어</button>
-                    <button onclick="navigateTo('campaign')" class="nav-btn px-2 py-2 hover:text-water-600 transition-colors" id="nav-btn-campaign">카드 뉴스</button>
-                    <button onclick="navigateTo('history')" class="nav-btn px-2 py-2 hover:text-water-600 transition-colors" id="nav-btn-history">연혁 및 실적</button>
-                    <button onclick="navigateTo('technology')" class="nav-btn px-2 py-2 hover:text-water-600 transition-colors" id="nav-btn-technology">기술 및 품질</button>
-                    <button onclick="navigateTo('inquiry')" class="nav-btn px-2 py-2 hover:text-water-600 transition-colors" id="nav-btn-inquiry">고객문의</button>
+                <nav class="hidden md:flex gap-1 lg:gap-2 text-xs lg:text-sm font-semibold text-slate-600" id="desktop-nav">
+                    <button onclick="navigateTo('home')" class="nav-btn px-1.5 py-2 lg:px-2 hover:text-water-600 transition-colors active-nav-link whitespace-nowrap" id="nav-btn-home">홈</button>
+                    <button onclick="navigateTo('about')" class="nav-btn px-1.5 py-2 lg:px-2 hover:text-water-600 transition-colors whitespace-nowrap" id="nav-btn-about">회사소개</button>
+                    <button onclick="navigateTo('products')" class="nav-btn px-1.5 py-2 lg:px-2 hover:text-water-600 transition-colors whitespace-nowrap" id="nav-btn-products">제품소개</button>
+                    <button onclick="navigateTo('advertisement')" class="nav-btn px-1.5 py-2 lg:px-2 hover:text-water-600 transition-colors whitespace-nowrap" id="nav-btn-advertisement">광고영상</button>
+                    <button onclick="navigateTo('brochure')" class="nav-btn px-1.5 py-2 lg:px-2 hover:text-water-600 transition-colors whitespace-nowrap" id="nav-btn-brochure">브로슈어</button>
+                    <button onclick="navigateTo('campaign')" class="nav-btn px-1.5 py-2 lg:px-2 hover:text-water-600 transition-colors whitespace-nowrap" id="nav-btn-campaign">카드 뉴스</button>
+                    <button onclick="navigateTo('history')" class="nav-btn px-1.5 py-2 lg:px-2 hover:text-water-600 transition-colors whitespace-nowrap" id="nav-btn-history">연혁</button>
+                    <button onclick="navigateTo('technology')" class="nav-btn px-1.5 py-2 lg:px-2 hover:text-water-600 transition-colors whitespace-nowrap" id="nav-btn-technology">기술</button>
+                    <button onclick="navigateTo('inquiry')" class="nav-btn px-1.5 py-2 lg:px-2 hover:text-water-600 transition-colors whitespace-nowrap" id="nav-btn-inquiry">문의</button>
                 </nav>
 
                 <!-- Inquiry Action Button -->
-                <div class="hidden md:flex items-center gap-3">
-                    <button id="music-toggle-btn" onclick="toggleBackgroundMusic()" class="px-4 py-2.5 bg-slate-100 text-slate-700 font-semibold text-sm rounded-xl hover:bg-slate-200 transition-all flex items-center gap-2 border border-slate-200" title="브금 음소거">
-                        <i class="fa-solid fa-volume-high" id="music-icon"></i> <span id="music-text">음소거</span>
-                    </button>
-                    <button onclick="navigateTo('inquiry')" class="px-5 py-2.5 bg-water-600 text-white font-bold text-sm rounded-xl shadow-md shadow-water-100 hover:bg-water-700 hover:shadow-lg transition-all">
+                <div class="hidden md:flex items-center">
+                    <button onclick="navigateTo('inquiry')" class="px-4 lg:px-5 py-2 lg:py-2.5 bg-water-600 text-white font-bold text-xs lg:text-sm rounded-xl shadow-md shadow-water-100 hover:bg-water-700 hover:shadow-lg transition-all whitespace-nowrap">
                         <i class="fa-solid fa-paper-plane mr-1.5"></i> 견적 문의하기
                     </button>
                 </div>
@@ -982,6 +979,12 @@
             </div>
         </div>
     </footer>
+
+    <!-- Floating Background Music Control Button -->
+    <button id="floating-music-btn" onclick="toggleBackgroundMusic()" class="fixed bottom-20 right-8 z-50 w-16 h-16 bg-water-600 hover:bg-water-700 text-white rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 flex-col group" title="음악 제어">
+        <i class="fa-solid fa-volume-high text-xl" id="floating-music-icon"></i>
+        <span class="text-xs font-bold mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200" id="floating-music-label">음소거</span>
+    </button>
 
     <!-- Modals -->
 
