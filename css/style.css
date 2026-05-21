@@ -1,30 +1,31 @@
 /* (주)비에이텍 Custom Stylesheet - style.css */
 
-/* Custom smooth transitions & animations */
+/* Custom smooth transitions */
 .transition-all-300 {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Custom dynamic ripple glow */
+/* Water Gradient Background */
 .water-gradient-bg {
     background: linear-gradient(135deg, #0f172a 0%, #0c4a6e 50%, #0369a1 100%);
 }
 
+/* Water Glassmorphism Effects */
 .water-glass {
-    background: rgba(255, 255, 255, 0.75);
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .water-glass-dark {
-    background: rgba(15, 23, 42, 0.8);
+    background: rgba(15, 23, 42, 0.85);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Custom scrollbar to look fluid and elegant */
+/* Custom Elegant Webkit Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -43,22 +44,22 @@
     background: #0284c7;
 }
 
-/* Style for Leaflet Map */
+/* Leaflet Map style */
 #leaflet-map {
     z-index: 10;
     border-radius: 1.5rem;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
 
-/* SPA section view transition classes */
+/* SPA Section view fade transition */
 .spa-view-section {
-    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
 .spa-view-section.hidden {
     display: none;
     opacity: 0;
-    transform: translateY(15px);
+    transform: translateY(12px);
 }
 
 .spa-view-section.active {
@@ -67,34 +68,91 @@
     transform: translateY(0);
 }
 
-/* Product Card animations */
+/* Product Card Filter hide/show transitions */
 .product-card {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .product-card.hidden {
     display: none;
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.96);
 }
 
-/* Custom Modal Styles */
+/* Custom Modal Animations */
 .modal-overlay {
     background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(6px);
 }
 
 .modal-content {
-    animation: modalSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: modalSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes modalSlideUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(24px);
     }
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* Digital Brochure Viewport Styles */
+#brochure-viewport-img {
+    transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+    transform-origin: center center;
+    cursor: grab;
+}
+
+#brochure-viewport-img:active {
+    cursor: grabbing;
+}
+
+/* Active Nav Links styling */
+.active-nav-link {
+    color: #0284c7 !important;
+    border-bottom: 2px solid #0284c7;
+}
+
+/* Card News Carousel transition class */
+.card-slide {
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+}
+
+/* Landscape PDF/A4 Printing System */
+@media print {
+    body {
+        background: white !important;
+        color: black !important;
+    }
+    /* Hide all layout structures on print screen */
+    body > *:not(#print-brochure-container) {
+        display: none !important;
+    }
+    /* Enable print-only container and fit layout */
+    #print-brochure-container {
+        display: block !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+    }
+    #print-brochure-container img {
+        width: 100% !important;
+        height: auto !important;
+        max-height: 100% !important;
+        object-fit: contain !important;
+        page-break-inside: avoid !important;
+    }
+    @page {
+        size: landscape; /* Landscape optimized brochure */
+        margin: 0;       /* No margins for full borderless fit */
     }
 }
