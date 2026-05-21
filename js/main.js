@@ -17,6 +17,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, { once: true });
             });
         }
+        
+        // 초기 버튼 상태 설정
+        const musicBtn = document.getElementById('music-toggle-btn');
+        const musicIcon = document.getElementById('music-icon');
+        const musicText = document.getElementById('music-text');
+        
+        if (musicBtn && musicIcon && musicText) {
+            setTimeout(() => {
+                if (!bgMusic.paused) {
+                    musicIcon.classList.add('fa-volume-high');
+                    musicIcon.classList.remove('fa-volume-mute');
+                    musicText.textContent = '음소거';
+                    musicBtn.classList.add('bg-slate-100', 'text-slate-700', 'hover:bg-slate-200');
+                    musicBtn.classList.remove('bg-red-100', 'text-red-700', 'hover:bg-red-200');
+                }
+            }, 500);
+        }
     }
 
     // 1. Header scroll visual state change
@@ -102,6 +119,34 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+/* ==========================================================================
+   Background Music Control
+   ========================================================================== */
+function toggleBackgroundMusic() {
+    const bgMusic = document.getElementById('background-music');
+    const musicBtn = document.getElementById('music-toggle-btn');
+    const musicIcon = document.getElementById('music-icon');
+    const musicText = document.getElementById('music-text');
+    
+    if (bgMusic) {
+        if (bgMusic.paused) {
+            bgMusic.play();
+            musicIcon.classList.remove('fa-volume-mute');
+            musicIcon.classList.add('fa-volume-high');
+            musicText.textContent = '음소거';
+            musicBtn.classList.remove('bg-red-100', 'text-red-700', 'hover:bg-red-200');
+            musicBtn.classList.add('bg-slate-100', 'text-slate-700', 'hover:bg-slate-200');
+        } else {
+            bgMusic.pause();
+            musicIcon.classList.remove('fa-volume-high');
+            musicIcon.classList.add('fa-volume-mute');
+            musicText.textContent = '재생';
+            musicBtn.classList.remove('bg-slate-100', 'text-slate-700', 'hover:bg-slate-200');
+            musicBtn.classList.add('bg-red-100', 'text-red-700', 'hover:bg-red-200');
+        }
+    }
+}
 
 /* ==========================================================================
    SPA Navigation & Routing Logic
