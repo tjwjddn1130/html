@@ -933,7 +933,7 @@ const cardNewsData = [
         title: "깨끗한 물, 우리의 미래",
         subtitle: "수자원 보호 캠페인",
         text: "물은 생명의 근원입니다. 비에이텍은 친환경 수처리 솔루션을 통해 수자원 오염을 방지하고 에너지를 절감하여 미래 세대에게 맑고 깨끗한 환경을 전합니다.",
-        image: "https://images.unsplash.com/photo-1548811295-2d4d989f64cd?auto=format&fit=crop&w=800"
+        image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800"
     },
     {
         title: "지능형 인버터로 에너지 세이빙",
