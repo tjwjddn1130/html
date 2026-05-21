@@ -77,6 +77,7 @@
                     <button onclick="navigateTo('home')" class="nav-btn px-2 py-2 hover:text-water-600 transition-colors active-nav-link" id="nav-btn-home">홈</button>
                     <button onclick="navigateTo('about')" class="nav-btn px-2 py-2 hover:text-water-600 transition-colors" id="nav-btn-about">회사소개</button>
                     <button onclick="navigateTo('products')" class="nav-btn px-2 py-2 hover:text-water-600 transition-colors" id="nav-btn-products">제품소개</button>
+                    <button onclick="navigateTo('advertisement')" class="nav-btn px-2 py-2 hover:text-water-600 transition-colors" id="nav-btn-advertisement">광고영상</button>
                     <button onclick="navigateTo('brochure')" class="nav-btn px-2 py-2 hover:text-water-600 transition-colors" id="nav-btn-brochure">디지털 브로슈어</button>
                     <button onclick="navigateTo('campaign')" class="nav-btn px-2 py-2 hover:text-water-600 transition-colors" id="nav-btn-campaign">카드 뉴스</button>
                     <button onclick="navigateTo('history')" class="nav-btn px-2 py-2 hover:text-water-600 transition-colors" id="nav-btn-history">연혁 및 실적</button>
@@ -105,6 +106,7 @@
             <button onclick="navigateTo('home')" class="block w-full text-left px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:bg-slate-50 hover:text-water-600 transition-colors">홈</button>
             <button onclick="navigateTo('about')" class="block w-full text-left px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:bg-slate-50 hover:text-water-600 transition-colors">회사소개</button>
             <button onclick="navigateTo('products')" class="block w-full text-left px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:bg-slate-50 hover:text-water-600 transition-colors">제품소개</button>
+            <button onclick="navigateTo('advertisement')" class="block w-full text-left px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:bg-slate-50 hover:text-water-600 transition-colors">광고영상</button>
             <button onclick="navigateTo('brochure')" class="block w-full text-left px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:bg-slate-50 hover:text-water-600 transition-colors">디지털 브로슈어</button>
             <button onclick="navigateTo('campaign')" class="block w-full text-left px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:bg-slate-50 hover:text-water-600 transition-colors">카드 뉴스</button>
             <button onclick="navigateTo('history')" class="block w-full text-left px-4 py-3 rounded-xl text-base font-semibold text-slate-700 hover:bg-slate-50 hover:text-water-600 transition-colors">연혁 및 실적</button>
@@ -181,7 +183,36 @@
         <div class="absolute bottom-0 left-0 right-0 h-16 bg-slate-50 [clip-path:polygon(0_100%,100%_100%,100%_0,0_100%)]"></div>
     </section>
 
-    <!-- 2. About Section -->
+    <!-- 2. Advertisement Video Section -->
+    <section id="advertisement" class="py-16 md:py-20 bg-slate-50 border-b border-slate-100 spa-view-section hidden scroll-mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Section Header -->
+            <div class="text-center max-w-3xl mx-auto mb-12 space-y-3">
+                <span class="px-3 py-1 text-xs font-semibold text-water-600 bg-water-50 rounded-full uppercase tracking-wider">TV Commercial</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight">광고영상</h2>
+                <div class="w-12 h-1 bg-water-500 mx-auto rounded-full"></div>
+                <p class="text-slate-500 font-medium pt-2">(주)비에이텍의 브랜드 이야기를 영상으로 만나보세요.</p>
+            </div>
+
+            <!-- Video Player Container -->
+            <div class="max-w-4xl mx-auto bg-black rounded-3xl overflow-hidden shadow-2xl border border-slate-200">
+                <video controls class="w-full h-auto aspect-video bg-black" poster="">
+                    <source src="Gen-4 Turbo - Extreme macro close-up shot of crystal-clear wate r surging through a pristine transpar.mp4" type="video/mp4">
+                    <p>현재 브라우저에서 지원하지 않는 영상 형식입니다.</p>
+                </video>
+            </div>
+
+            <!-- Video Description -->
+            <div class="max-w-2xl mx-auto mt-10 text-center">
+                <p class="text-slate-600 text-sm md:text-base leading-relaxed">
+                    맑고 깨끗한 물을 안전하게 공급하고 순환시키는 (주)비에이텍의 혁신적인 유체 엔지니어링 솔루션을 경험해보세요.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. About Section -->
     <section id="about" class="py-20 bg-slate-50 spa-view-section hidden scroll-mt-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
@@ -463,7 +494,7 @@
         </div>
     </section>
 
-    <!-- 3. Products Section -->
+    <!-- 4. Products Section -->
     <section id="products" class="py-20 bg-white border-t border-slate-100 spa-view-section hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
@@ -490,7 +521,7 @@
         </div>
     </section>
 
-    <!-- 4. Digital Brochure Section -->
+    <!-- 5. Digital Brochure Section -->
     <section id="brochure" class="py-20 bg-slate-100 border-t border-b border-slate-200/60 spa-view-section hidden scroll-mt-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
@@ -570,7 +601,7 @@
         </div>
     </section>
 
-    <!-- 5. Campaign / Card News Section -->
+    <!-- 6. Campaign / Card News Section -->
     <section id="campaign" class="py-20 bg-white border-b border-slate-100 spa-view-section hidden scroll-mt-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
@@ -608,7 +639,7 @@
         </div>
     </section>
 
-    <!-- 6. Timeline & Projects Section -->
+    <!-- 7. Timeline & Projects Section -->
     <section id="history" class="py-20 bg-slate-50 border-t border-b border-slate-100 spa-view-section hidden scroll-mt-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
@@ -765,7 +796,7 @@
         </div>
     </section>
 
-    <!-- 8. Inquiry Section -->
+    <!-- 9. Inquiry Section -->
     <section id="inquiry" class="py-20 bg-slate-50 border-t border-slate-100 spa-view-section hidden scroll-mt-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
