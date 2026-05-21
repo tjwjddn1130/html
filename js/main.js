@@ -1,6 +1,24 @@
 /* (주)비에이텍 Main Javascript - main.js */
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 0. Initialize Background Music
+    const bgMusic = document.getElementById('background-music');
+    if (bgMusic) {
+        bgMusic.muted = false;
+        const playPromise = bgMusic.play();
+        
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                // 자동 재생이 차단된 경우, 첫 사용자 상호작용 시 재생
+                console.log('Auto-play prevented, will play on user interaction');
+                document.addEventListener('click', function resumeAudio() {
+                    bgMusic.play();
+                    document.removeEventListener('click', resumeAudio);
+                }, { once: true });
+            });
+        }
+    }
+
     // 1. Header scroll visual state change
     const mainHeader = document.getElementById('main-header');
     if (mainHeader) {
