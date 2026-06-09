@@ -97,6 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 5-1. Setup Chatbot Interaction
     initChatbot();
+    // 5-2. Setup Search Interaction
+    initSearch();
 
     // 6. Render Dynamic Products Grid
     renderProducts();
@@ -1012,6 +1014,164 @@ function initBrochureControls() {
 
     // Expose update function globally or save state
     window.updateBrochureTransform = updateBrochureTransform;
+}
+
+/* ==========================================================================
+   Simple Client-side Search
+   ========================================================================== */
+function initSearch() {
+    const overlay = document.getElementById('search-overlay');
+    const input = document.getElementById('search-input');
+    const btn = document.getElementById('search-btn');
+    const closeBtn = document.getElementById('search-close-btn');
+    const mobileToggle = document.getElementById('search-toggle-btn-mobile');
+
+    if (!overlay || !input || !btn || !closeBtn) return;
+
+    // Build searchable index
+    window._siteSearchIndex = buildSearchIndex();
+
+    function openSearch() {
+        overlay.classList.remove('hidden');
+        input.focus();
+        input.select();
+    }
+
+    function closeSearch() {
+        overlay.classList.add('hidden');
+        const results = document.getElementById('search-results');
+        if (results) results.innerHTML = '';
+        input.value = '';
+    }
+
+    if (mobileToggle) mobileToggle.addEventListener('click', openSearch);
+    closeBtn.addEventListener('click', closeSearch);
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeSearch();
+    });
+
+    btn.addEventListener('click', () => performSearch(input.value));
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            performSearch(input.value);
+        } else if (e.key === 'Escape') {
+            closeSearch();
+        }
+    });
+}
+
+function buildSearchIndex() {
+    const index = [];
+
+    // Sections: use id and heading text
+    document.querySelectorAll('section[id]').forEach(sec => {
+        const titleEl = sec.querySelector('h2, h3, h1');
+        const title = titleEl ? titleEl.innerText.trim() : sec.id;
+        const text = sec.innerText.replace(/\s+/g, ' ').trim();
+        index.push({ type: 'section', id: sec.id, title, text });
+    });
+
+    // Products
+    if (window.productsData) {
+        window.productsData.forEach(p => {
+            index.push({ type: 'product', id: p.id, title: p.title, text: (p.desc || '') + ' ' + (p.tag || '') });
+        });
+    }
+
+    // History entries
+    if (window.historyProjects) {
+        window.historyProjects.forEach((h, i) => {
+            index.push({ type: 'history', id: `history-${i}`, title: `${h.client} (${h.year})`, text: h.project });
+        });
+    }
+
+    return index;
+}
+
+function performSearch(query) {
+    const q = (query || '').trim();
+    const resultsEl = document.getElementById('search-results');
+    if (!resultsEl) return;
+    resultsEl.innerHTML = '';
+
+    if (!q) {
+        resultsEl.innerHTML = '<p class="text-slate-500">검색어를 입력해 주세요.</p>';
+        return;
+    }
+
+    const index = window._siteSearchIndex || buildSearchIndex();
+    const normalized = q.toLowerCase();
+
+    const results = index.filter(item => {
+        return (item.title && item.title.toLowerCase().includes(normalized)) || (item.text && item.text.toLowerCase().includes(normalized));
+    }).slice(0, 30);
+
+    if (results.length === 0) {
+        resultsEl.innerHTML = `<p class="text-slate-500">'${q}'(으)로 검색된 결과가 없습니다.</p>`;
+        return;
+    }
+
+    const ul = document.createElement('div');
+    ul.className = 'space-y-2';
+
+    results.forEach(r => {
+        const btn = document.createElement('button');
+        btn.className = 'w-full text-left p-3 rounded-xl hover:bg-slate-50 transition flex items-start gap-3';
+
+        const kind = document.createElement('div');
+        kind.className = 'w-10 h-10 shrink-0 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-sm';
+        kind.innerText = r.type === 'product' ? '제품' : r.type === 'section' ? '섹션' : '실적';
+
+        const meta = document.createElement('div');
+        meta.className = 'flex-1';
+        const title = document.createElement('div');
+        title.className = 'font-bold text-slate-800';
+        title.innerHTML = highlight(r.title, query);
+        const snippet = document.createElement('div');
+        snippet.className = 'text-slate-500 text-sm mt-1';
+        const previewText = (r.text || '').slice(0, 160);
+        snippet.innerHTML = highlight(previewText, query) + (r.text && r.text.length > 160 ? '...' : '');
+
+        meta.appendChild(title);
+        meta.appendChild(snippet);
+
+        btn.appendChild(kind);
+        btn.appendChild(meta);
+
+        btn.addEventListener('click', () => {
+            // Close overlay
+            const overlay = document.getElementById('search-overlay');
+            if (overlay) overlay.classList.add('hidden');
+
+            // Navigate based on type
+            if (r.type === 'product') {
+                // open product modal
+                openProductDetail(r.id);
+            } else if (r.type === 'section') {
+                navigateTo(r.id);
+            } else if (r.type === 'history') {
+                navigateTo('history');
+            }
+        });
+
+        ul.appendChild(btn);
+    });
+
+    resultsEl.appendChild(ul);
+}
+
+function highlight(text, term) {
+    if (!term) return escapeHtml(text);
+    const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re = new RegExp(escapedTerm, 'ig');
+    return escapeHtml(text).replace(re, match => `<mark class="bg-yellow-200 rounded">${match}</mark>`);
+}
+
+function escapeHtml(str) {
+    return (str || '').replace(/[&<>"']/g, function (c) {
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c];
+    });
 }
 
 function adjustBrochureZoom(delta) {

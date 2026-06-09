@@ -94,6 +94,10 @@
 
                 <!-- Mobile Menu Button -->
                 <div class="md:hidden flex items-center">
+                    <!-- Search Toggle (mobile) -->
+                    <button id="search-toggle-btn-mobile" class="text-slate-500 hover:text-slate-800 focus:outline-none p-2 rounded-lg hover:bg-slate-100 transition-colors mr-2" aria-label="Toggle search">
+                        <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                    </button>
                     <button id="mobile-menu-btn" class="text-slate-500 hover:text-slate-800 focus:outline-none p-2 rounded-lg hover:bg-slate-100 transition-colors" aria-label="Toggle menu">
                         <i class="fa-solid fa-bars text-xl" id="menu-icon"></i>
                     </button>
@@ -1105,6 +1109,20 @@
             <i class="fa-solid fa-robot text-lg"></i>
             챗봇 문의
         </button>
+    </div>
+
+    <!-- Search Overlay -->
+    <div id="search-overlay" class="fixed inset-0 z-60 hidden items-start justify-center pt-24 px-4">
+        <div class="w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="flex items-center gap-3 px-4 py-3 border-b border-slate-100">
+                <input id="search-input" type="text" placeholder="검색어를 입력하세요. (제품, 설치, 가격, 문의 등)" class="flex-1 px-4 py-3 rounded-xl border border-slate-200 focus:border-water-500 focus:ring-2 focus:ring-water-100 outline-none text-sm" />
+                <button id="search-btn" class="px-4 py-2 bg-water-600 text-white rounded-xl font-bold">검색</button>
+                <button id="search-close-btn" class="text-slate-600 px-3 py-2 hover:bg-slate-50 rounded-lg">닫기</button>
+            </div>
+            <div id="search-results" class="p-4 max-h-[50vh] overflow-y-auto">
+                <!-- Results injected by JS -->
+            </div>
+        </div>
     </div>
 
     <!-- Print Only Brochure Container -->
