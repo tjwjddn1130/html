@@ -95,6 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // 5. Setup Form Submit Validation
     initInquiryForm();
 
+    // 5-1. Setup Chatbot Interaction
+    initChatbot();
+
     // 6. Render Dynamic Products Grid
     renderProducts();
 
@@ -802,6 +805,99 @@ function initInquiryForm() {
         // Reset form
         form.reset();
     });
+}
+
+/* ==========================================================================
+   Simple Chatbot for FAQ-style answers
+   ========================================================================== */
+function initChatbot() {
+    const toggleBtn = document.getElementById('chatbot-toggle-btn');
+    const panel = document.getElementById('chatbot-panel');
+    const form = document.getElementById('chatbot-form');
+    const input = document.getElementById('chatbot-input');
+
+    if (!toggleBtn || !panel || !form || !input) return;
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const question = input.value.trim();
+        if (!question) return;
+
+        addChatbotMessage('user', question);
+        input.value = '';
+
+        const answer = generateChatbotAnswer(question);
+        setTimeout(() => addChatbotMessage('bot', answer), 300);
+    });
+}
+
+function toggleChatbot() {
+    const panel = document.getElementById('chatbot-panel');
+    const input = document.getElementById('chatbot-input');
+    if (!panel) return;
+
+    panel.classList.toggle('hidden');
+    if (!panel.classList.contains('hidden') && input) {
+        input.focus();
+    }
+}
+
+function addChatbotMessage(role, text) {
+    const messages = document.getElementById('chatbot-messages');
+    if (!messages) return;
+
+    const bubble = document.createElement('div');
+    bubble.className = `chatbot-message ${role === 'user' ? 'chatbot-message-user' : 'chatbot-message-bot'}`;
+    bubble.innerHTML = text.replace(/\n/g, '<br>');
+    messages.appendChild(bubble);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+function generateChatbotAnswer(question) {
+    const normalized = question.toLowerCase();
+
+    const answers = [
+        {
+            test: /(가격|견적|비용|단가)/,
+            reply: '제품별 가격은 문의해 주시면 정확한 사양, 규격, 수량에 따라 안내해 드립니다. 간단한 견적 상담을 원하시면 설치 위치와 사용 목적을 함께 알려주세요.'
+        },
+        {
+            test: /(설치|시공|공사|배관|현장)/,
+            reply: '설치 및 시공은 현장 여건과 배관 형태에 따라 다릅니다. 방문 상담 후 정확한 설치 계획과 일정을 안내해 드립니다.'
+        },
+        {
+            test: /(수리|고장|정비|점검)/,
+            reply: '긴급 수리 및 정비는 고장 증상과 사용 중인 펌프 모델을 확인해야 합니다. 전화 또는 이메일로 상세 증상을 알려주시면 빠르게 대응하겠습니다.'
+        },
+        {
+            test: /(제품|펌프|라인업|모델)/,
+            reply: '저희는 맞춤형 워터펌프, 압력탱크, 자동 급수 시스템 등 다양한 유체 엔지니어링 제품을 제공합니다. 필요하신 용도나 설치 환경을 알려주세요.'
+        },
+        {
+            test: /(연락처|전화|전화번호|문의 방법)/,
+            reply: '대표전화는 033-264-9243이며, 이메일은 gwf0123@hanmail.net입니다. 언제든 연락 주시면 친절히 안내해 드리겠습니다.'
+        },
+        {
+            test: /(주소|위치|찾아오|오시는 길)/,
+            reply: '저희 본사는 강원특별자치도 춘천시 퇴계공단2길 64에 위치해 있습니다. 방문 전 연락 주시면 더욱 정확한 안내를 도와드릴게요.'
+        },
+        {
+            test: /(영업|운영|시간|근무)/,
+            reply: '영업일은 월요일부터 금요일까지이며, 주요 상담 시간은 오전 9시부터 오후 6시까지입니다. 주말 상담이 필요하시면 사전 예약을 부탁드립니다.'
+        },
+        {
+            test: /(안녕|안녕하세요|hi|hello|반갑)/,
+            reply: '안녕하세요! 무엇을 도와드릴까요? 궁금하신 내용을 입력해 주세요.'
+        }
+    ];
+
+    for (const answer of answers) {
+        if (answer.test.test(normalized)) {
+            return answer.reply;
+        }
+    }
+
+    return '죄송합니다. 현재는 간단한 문의만 안내해 드릴 수 있습니다. 제품, 가격, 설치, 수리, 연락처, 위치 관련 질문을 부탁드립니다.';
 }
 
 /* ==========================================================================

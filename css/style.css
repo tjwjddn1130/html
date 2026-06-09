@@ -135,7 +135,42 @@
     border-bottom: 2px solid #0284c7;
 }
 
-/* Card News Carousel transition class */
+#chatbot-widget {
+    z-index: 60;
+}
+
+#chatbot-panel {
+    min-width: 300px;
+    max-width: 360px;
+}
+
+#chatbot-messages {
+    display: flex;
+    flex-direction: column;
+}
+
+.chatbot-message {
+    max-width: 90%;
+    padding: 0.9rem 1rem;
+    border-radius: 1.5rem;
+    line-height: 1.6;
+    word-break: keep-all;
+}
+
+.chatbot-message-bot {
+    background: #f8fafc;
+    color: #0f172a;
+    align-self: flex-start;
+    border-top-left-radius: 0.75rem;
+}
+
+.chatbot-message-user {
+    background: #0ea5e9;
+    color: #ffffff;
+    align-self: flex-end;
+    border-top-right-radius: 0.75rem;
+}
+
 .card-slide {
     transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
 }
