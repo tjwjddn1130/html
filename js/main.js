@@ -1020,18 +1020,25 @@ function renderProducts() {
         card.className = 'product-card bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-2xl transition duration-300 transform hover:-translate-y-1';
         card.setAttribute('data-category', p.category);
         card.innerHTML = `
-            <button type="button" onclick="openGalleryModal('${p.image}', '${p.imageAlt}', '${p.title} 브로슈어 실물 사진을 확인해 보세요.')" class="relative block w-full h-64 overflow-hidden bg-slate-100 group text-left">
-                <img src="${p.image}" alt="${p.imageAlt}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" style="object-position: ${p.imageFocus};" onerror="this.src='https://placehold.co/1200x900/0f172a/ffffff?text=Biatech+Product';">
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/15 to-transparent"></div>
-                <div class="absolute top-4 left-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 text-slate-800 text-xs font-black shadow-sm backdrop-blur">
-                    <i class="fa-solid fa-camera text-water-600"></i> 실물 사진
+            <div class="relative block w-full h-64 overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-water-900 group text-left">
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.22),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(2,132,199,0.26),transparent_38%)]"></div>
+                <div class="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.06)_0%,transparent_45%,rgba(255,255,255,0.05)_100%)]"></div>
+                <div class="absolute inset-x-0 top-0 h-1.5 ${p.badgeColor}"></div>
+                <div class="absolute top-4 left-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 text-white text-xs font-black border border-white/15 backdrop-blur">
+                    <i class="${p.icon} text-cyan-300"></i> 비에이텍 솔루션
                 </div>
-                <span class="absolute top-4 right-4 ${p.badgeColor} text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">${p.badge}</span>
-                <div class="absolute bottom-4 left-4 right-4 text-white">
-                    <p class="text-[11px] uppercase tracking-[0.2em] text-cyan-200/90 font-bold">Click to view</p>
-                    <p class="text-sm font-bold leading-snug mt-1">${p.title}</p>
+                <div class="absolute top-4 right-4 ${p.badgeColor} text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">${p.badge}</div>
+                <div class="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6 text-center text-white">
+                    <div class="w-24 h-24 rounded-3xl bg-white/10 border border-white/15 shadow-2xl shadow-water-950/30 flex items-center justify-center backdrop-blur-sm">
+                        <i class="${p.icon} ${p.iconColor} text-4xl"></i>
+                    </div>
+                    <div class="space-y-2 max-w-[16rem]">
+                        <p class="text-[11px] uppercase tracking-[0.28em] text-cyan-200/80 font-bold">Product Concept</p>
+                        <h4 class="text-xl font-extrabold leading-tight">${p.title}</h4>
+                        <p class="text-sm text-slate-200/90 leading-relaxed">${p.tag}</p>
+                    </div>
                 </div>
-            </button>
+            </div>
             <div class="p-6">
                 <h4 class="text-xl font-bold text-slate-800">${p.title}</h4>
                 <p class="text-slate-500 text-sm mt-2 leading-relaxed">${p.desc}</p>
@@ -1262,6 +1269,21 @@ function initLeafletMap() {
     });
 }
 
+function openOfficeMap(service) {
+    const address = '강원특별자치도 춘천시 퇴계공단2길 64';
+    const encodedAddress = encodeURIComponent(address);
+    const urls = {
+        naver: `https://map.naver.com/p/search/${encodedAddress}`,
+        kakao: `https://map.kakao.com/link/search/${encodedAddress}`
+    };
+
+    const url = urls[service] || urls.naver;
+    const opened = window.open(url, '_blank', 'noopener,noreferrer');
+    if (!opened) {
+        window.location.href = url;
+    }
+}
+
 /* ==========================================================================
    Interactive Sine Waves Canvas Animation (Fluid Look)
    ========================================================================== */
@@ -1417,10 +1439,23 @@ function initInquiryForm() {
             return;
         }
 
-        // Simulating success submit behavior
-        alert(`온라인 문의가 정상적으로 접수되었습니다.\n\n업체/성함: ${name}\n문의유형: ${type}\n\n등록해 주신 이메일(${email}) 및 전화번호(${phone})로 신속히 연락해 안내해 드리겠습니다.`);
-        
-        // Reset form
+        const subject = encodeURIComponent(`[비에이텍 문의] ${type} - ${name}`);
+        const body = encodeURIComponent([
+            '비에이텍 홈페이지 문의가 도착했습니다.',
+            '',
+            `성함 / 업체명: ${name}`,
+            `연락처: ${phone}`,
+            `고객 이메일: ${email}`,
+            `문의 유형: ${type}`,
+            '',
+            '문의 내용:',
+            message
+        ].join('\n'));
+
+        alert('메일 작성 창을 열었습니다. 전송 버튼을 누르면 tjwjddn1130@gmail.com으로 문의가 전달됩니다.');
+
+        window.location.href = `mailto:tjwjddn1130@gmail.com?subject=${subject}&body=${body}`;
+
         form.reset();
     });
 }

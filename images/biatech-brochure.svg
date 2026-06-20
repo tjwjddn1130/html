@@ -1,0 +1,112 @@
+<svg width="1400" height="990" viewBox="0 0 1400 990" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="(주)비에이텍 브랜드 브로슈어">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1400" y2="990" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#08111f"/>
+      <stop offset="0.48" stop-color="#0c4a6e"/>
+      <stop offset="1" stop-color="#0284c7"/>
+    </linearGradient>
+    <linearGradient id="card" x1="140" y1="120" x2="1260" y2="880" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.06"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="210" y1="160" x2="1210" y2="840" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7dd3fc"/>
+      <stop offset="0.55" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#0ea5e9"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1110 210) rotate(140) scale(520 360)">
+      <stop stop-color="#67e8f9" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#67e8f9" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur" x="0" y="0" width="1400" height="990" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="44"/>
+    </filter>
+  </defs>
+
+  <rect width="1400" height="990" fill="url(#bg)"/>
+  <circle cx="160" cy="190" r="130" fill="#38bdf8" fill-opacity="0.14" filter="url(#blur)"/>
+  <circle cx="1180" cy="210" r="200" fill="url(#glow)"/>
+  <circle cx="1210" cy="820" r="160" fill="#0ea5e9" fill-opacity="0.12" filter="url(#blur)"/>
+  <path d="M0 770C220 710 330 840 560 790C760 745 920 675 1110 710C1230 732 1308 768 1400 792V990H0V770Z" fill="#04111f" fill-opacity="0.35"/>
+
+  <rect x="70" y="70" width="1260" height="850" rx="44" fill="url(#card)" stroke="#ffffff" stroke-opacity="0.12"/>
+  <rect x="96" y="96" width="1208" height="798" rx="34" stroke="#ffffff" stroke-opacity="0.08"/>
+
+  <rect x="126" y="132" width="185" height="38" rx="19" fill="#ffffff" fill-opacity="0.12" stroke="#7dd3fc" stroke-opacity="0.22"/>
+  <text x="151" y="157" fill="#e0f2fe" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="16" font-weight="800">4-SIDE CATALOG</text>
+
+  <line x1="132" y1="382" x2="1268" y2="382" stroke="#ffffff" stroke-opacity="0.14" stroke-dasharray="8 10"/>
+  <line x1="700" y1="410" x2="700" y2="586" stroke="#ffffff" stroke-opacity="0.16"/>
+
+  <text x="132" y="165" fill="#dbeafe" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="24" font-weight="700" letter-spacing="4">BIATECH CORPORATE BROCHURE</text>
+  <text x="132" y="230" fill="#ffffff" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="66" font-weight="900">맑은 물을 위한</text>
+  <text x="132" y="302" fill="#ffffff" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="66" font-weight="900">정밀 유체 엔지니어링</text>
+  <text x="132" y="360" fill="#cffafe" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="24" font-weight="500">비에이텍은 설계, 제작, 시공, 유지보수를 하나의 흐름으로 완성합니다.</text>
+
+  <rect x="132" y="410" width="308" height="166" rx="28" fill="#ffffff" fill-opacity="0.11" stroke="#ffffff" stroke-opacity="0.14"/>
+  <rect x="470" y="410" width="308" height="166" rx="28" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.14"/>
+  <rect x="808" y="410" width="308" height="166" rx="28" fill="#ffffff" fill-opacity="0.09" stroke="#ffffff" stroke-opacity="0.14"/>
+
+  <rect x="132" y="610" width="650" height="48" rx="18" fill="#08111f" fill-opacity="0.58" stroke="#7dd3fc" stroke-opacity="0.16"/>
+  <text x="158" y="641" fill="#dbeafe" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="16" font-weight="700">설계 · 제작 · 시공 · 유지보수 · 검사까지 한 흐름으로 연결되는 토탈 솔루션</text>
+
+  <rect x="808" y="610" width="308" height="48" rx="18" fill="#ffffff" fill-opacity="0.1" stroke="#ffffff" stroke-opacity="0.14"/>
+  <text x="835" y="641" fill="#ffffff" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="16" font-weight="700">견적 · 납기 · 현장 대응 중심</text>
+
+  <circle cx="196" cy="478" r="38" fill="#0ea5e9" fill-opacity="0.22" stroke="#7dd3fc" stroke-width="3"/>
+  <path d="M196 448C183 468 178 483 178 494C178 510 186 523 196 523C206 523 214 510 214 494C214 483 209 468 196 448Z" fill="#ffffff" fill-opacity="0.92"/>
+  <path d="M184 494H208" stroke="#0ea5e9" stroke-width="3.5" stroke-linecap="round"/>
+  <text x="255" y="470" fill="#ffffff" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="30" font-weight="800">맞춤형 부스터</text>
+  <text x="255" y="507" fill="#e0f2fe" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="20" font-weight="500">일정 압력 유지 · 에너지 절감 · IoT 제어</text>
+
+  <circle cx="534" cy="478" r="38" fill="#22c55e" fill-opacity="0.18" stroke="#86efac" stroke-width="3"/>
+  <path d="M520 492C522 477 530 463 546 455C545 471 549 482 560 490C546 499 532 500 520 492Z" fill="#ffffff" fill-opacity="0.92"/>
+  <path d="M534 447V509" stroke="#22c55e" stroke-width="3.5" stroke-linecap="round"/>
+  <text x="593" y="470" fill="#ffffff" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="30" font-weight="800">수중 · 배수 펌프</text>
+  <text x="593" y="507" fill="#dcfce7" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="20" font-weight="500">지하수 개발 · 오배수 처리 · 고내구 설계</text>
+
+  <circle cx="872" cy="478" r="38" fill="#f97316" fill-opacity="0.18" stroke="#fdba74" stroke-width="3"/>
+  <path d="M848 485H896" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+  <path d="M859 470L872 457L885 470" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M859 496L872 509L885 496" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="931" y="470" fill="#ffffff" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="30" font-weight="800">원심 · 고압 라인</text>
+  <text x="931" y="507" fill="#ffedd5" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="20" font-weight="500">보일러 급수 · 순환수 · 산업용 가압</text>
+
+  <rect x="132" y="672" width="318" height="152" rx="28" fill="#071827" fill-opacity="0.82" stroke="#7dd3fc" stroke-opacity="0.2"/>
+  <text x="166" y="718" fill="#ffffff" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="28" font-weight="800">비에이텍의 약속</text>
+  <text x="166" y="756" fill="#cbd5e1" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="19" font-weight="500">현장에 맞는 설계와 빠른 대응으로</text>
+  <text x="166" y="784" fill="#cbd5e1" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="19" font-weight="500">안정적인 물 공급 환경을 만듭니다.</text>
+
+  <rect x="470" y="672" width="314" height="152" rx="28" fill="#ffffff" fill-opacity="0.09" stroke="#ffffff" stroke-opacity="0.14"/>
+  <text x="502" y="718" fill="#ffffff" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="24" font-weight="800">핵심 공정</text>
+  <text x="502" y="754" fill="#dbeafe" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="18" font-weight="500">설계 검토 → 제작 조립 → 성능 시험</text>
+  <text x="502" y="782" fill="#dbeafe" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="18" font-weight="500">출하 검수 → 현장 설치 → 사후 관리</text>
+
+  <rect x="808" y="672" width="308" height="152" rx="28" fill="#ffffff" fill-opacity="0.12" stroke="#ffffff" stroke-opacity="0.14"/>
+  <text x="840" y="718" fill="#ffffff" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="24" font-weight="800">대표 시스템</text>
+  <text x="840" y="754" fill="#e0f2fe" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="18" font-weight="500">부스터 / 수중 / 원심 / 제어반</text>
+  <text x="840" y="782" fill="#e0f2fe" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="18" font-weight="500">맞춤형 현장 대응 솔루션</text>
+
+  <text x="166" y="846" fill="#7dd3fc" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="17" font-weight="700" letter-spacing="2">CUSTOM DESIGN · INSTALLATION · MAINTENANCE</text>
+
+  <rect x="1148" y="640" width="72" height="184" rx="24" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.14"/>
+  <text x="1168" y="690" fill="#dbeafe" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="18" font-weight="800" transform="rotate(90 1168 690)">PAGE 01</text>
+
+  <rect x="692" y="640" width="424" height="184" rx="30" fill="#ffffff" fill-opacity="0.1" stroke="#ffffff" stroke-opacity="0.14"/>
+  <text x="736" y="695" fill="#ffffff" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="28" font-weight="800">품질과 신뢰</text>
+  <text x="736" y="736" fill="#dbeafe" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="20" font-weight="500">정밀 조립 · 성능 시험 · 출하 검수</text>
+  <text x="736" y="772" fill="#dbeafe" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="20" font-weight="500">브랜드에 맞는 깔끔한 시각 언어로 재구성</text>
+  <rect x="736" y="796" width="176" height="34" rx="17" fill="url(#accent)"/>
+  <text x="760" y="818" fill="#ffffff" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="16" font-weight="800">BAETECH WATER SYSTEM</text>
+
+  <rect x="930" y="796" width="160" height="34" rx="17" fill="#04111f" fill-opacity="0.45" stroke="#7dd3fc" stroke-opacity="0.18"/>
+  <text x="951" y="818" fill="#cbd5e1" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="16" font-weight="700">PAGE 04 / END</text>
+
+  <circle cx="1178" cy="705" r="72" fill="#0ea5e9" fill-opacity="0.14"/>
+  <path d="M1178 651C1159 678 1150 697 1150 716C1150 741 1164 759 1178 759C1192 759 1206 741 1206 716C1206 697 1197 678 1178 651Z" fill="#ffffff" fill-opacity="0.95"/>
+  <path d="M1148 716H1208" stroke="#7dd3fc" stroke-width="4" stroke-linecap="round"/>
+  <path d="M1167 688H1189" stroke="#0ea5e9" stroke-width="4" stroke-linecap="round"/>
+  <path d="M1167 744H1189" stroke="#0ea5e9" stroke-width="4" stroke-linecap="round"/>
+
+  <text x="132" y="902" fill="#93c5fd" font-family="Noto Sans KR, Pretendard, sans-serif" font-size="16" font-weight="600">(주)비에이텍 · 정밀 물 공급 솔루션 · 강원특별자치도 춘천시 퇴계공단</text>
+</svg>
