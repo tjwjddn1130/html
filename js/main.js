@@ -97,7 +97,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 5-1. Setup Chatbot Interaction
     initChatbot();
-    // 5-2. Setup Search Interaction
+
+    // 5-2. Initialize Staff Calendar
+    initStaffCalendar();
+
+    // 5-3. Setup Search Interaction
     initSearch();
 
     // 6. Render Dynamic Products Grid
@@ -351,6 +355,565 @@ const historyProjects = [
     { year: "2021", client: "춘천시 상수도사업소", project: "송배수용 대용량 원심 볼류트 펌프 및 밸브 설치", type: "public", typeKo: "관급/조달" },
     { year: "2020", client: "태백 농업기술센터", project: "농가 급수 공급용 심정 고내구 수중 모터 펌프 시공", type: "public", typeKo: "관급/조달" }
 ];
+
+const STAFF_CALENDAR_STORAGE_KEY = 'batech_staff_calendar_events';
+const STAFF_CALENDAR_UNLOCK_KEY = 'batech_staff_calendar_unlocked';
+const STAFF_CALENDAR_PASSCODE = 'BAETECH2026';
+
+const staffCalendarSeedEvents = [
+    {
+        id: 'staff-001',
+        title: '전사 운영회의',
+        category: 'meeting',
+        share: 'internal',
+        startDate: '2026-06-24',
+        endDate: '2026-06-24',
+        startTime: '09:30',
+        endTime: '11:00',
+        location: '본사 2층 회의실',
+        notes: '월간 실적 공유, 생산 일정 조정, 현장 이슈 정리'
+    },
+    {
+        id: 'staff-002',
+        title: '춘천 아테라더퍼스트 납품 일정',
+        category: 'event',
+        share: 'team',
+        startDate: '2026-06-27',
+        endDate: '2026-06-27',
+        startTime: '13:00',
+        endTime: '15:30',
+        location: '출하장',
+        notes: '출하 확인, 현장 담당자 연락, 납품 서류 준비'
+    },
+    {
+        id: 'staff-003',
+        title: '제어반 점검 마감',
+        category: 'deadline',
+        share: 'internal',
+        startDate: '2026-06-30',
+        endDate: '2026-06-30',
+        startTime: '',
+        endTime: '',
+        location: '품질보증부',
+        notes: '월말 점검표 제출, 테스트 결과 취합'
+    },
+    {
+        id: 'staff-004',
+        title: '정기 설비 유지보수',
+        category: 'maintenance',
+        share: 'team',
+        startDate: '2026-07-03',
+        endDate: '2026-07-04',
+        startTime: '08:30',
+        endTime: '17:30',
+        location: '생산동 전 구역',
+        notes: '가동 설비, 테스트 벤치, 배선 라인 점검'
+    }
+];
+
+let staffCalendarState = null;
+
+function normalizeStaffDate(value) {
+    if (!value) return '';
+    const date = value instanceof Date
+        ? value
+        : /^\d{4}-\d{2}-\d{2}$/.test(value)
+            ? new Date(`${value}T00:00:00`)
+            : new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+    const offset = date.getTimezoneOffset();
+    const localDate = new Date(date.getTime() - offset * 60000);
+    return localDate.toISOString().slice(0, 10);
+}
+
+function getCurrentMonthDate(date, monthOffset = 0) {
+    const next = new Date(date.getFullYear(), date.getMonth() + monthOffset, 1);
+    return next;
+}
+
+function formatStaffMonthLabel(date) {
+    return new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long' }).format(date);
+}
+
+function formatStaffDateLabel(dateString) {
+    if (!dateString) return '';
+    const date = new Date(`${dateString}T00:00:00`);
+    return new Intl.DateTimeFormat('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' }).format(date);
+}
+
+function formatStaffDateTime(dateString, timeString) {
+    const dateLabel = formatStaffDateLabel(dateString);
+    if (!timeString) return dateLabel;
+    return `${dateLabel} ${timeString}`;
+}
+
+function getStaffCategoryLabel(category) {
+    const labels = {
+        meeting: '회의',
+        event: '행사',
+        deadline: '마감',
+        maintenance: '유지보수'
+    };
+    return labels[category] || '일정';
+}
+
+function getStaffCategoryClasses(category) {
+    const classes = {
+        meeting: 'bg-water-50 text-water-700 border-water-200',
+        event: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        deadline: 'bg-amber-50 text-amber-700 border-amber-200',
+        maintenance: 'bg-slate-100 text-slate-700 border-slate-200'
+    };
+    return classes[category] || 'bg-slate-100 text-slate-700 border-slate-200';
+}
+
+function isStaffEventOnDate(event, dateString) {
+    return event.startDate <= dateString && event.endDate >= dateString;
+}
+
+function sortStaffEvents(a, b) {
+    const startDiff = new Date(`${a.startDate}T00:00:00`) - new Date(`${b.startDate}T00:00:00`);
+    if (startDiff !== 0) return startDiff;
+    const timeA = a.startTime || '99:99';
+    const timeB = b.startTime || '99:99';
+    return timeA.localeCompare(timeB);
+}
+
+function loadStaffEvents() {
+    try {
+        const raw = localStorage.getItem(STAFF_CALENDAR_STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : null;
+        if (Array.isArray(parsed)) {
+            return parsed.map(event => ({ ...event }));
+        }
+    } catch (error) {
+        console.warn('Failed to load staff events', error);
+    }
+    return staffCalendarSeedEvents.map(event => ({ ...event }));
+}
+
+function saveStaffEvents(events) {
+    localStorage.setItem(STAFF_CALENDAR_STORAGE_KEY, JSON.stringify(events));
+}
+
+function initStaffCalendar() {
+    const lockCard = document.getElementById('staff-lock-card');
+    const dashboard = document.getElementById('staff-dashboard');
+    const unlockBtn = document.getElementById('staff-unlock-btn');
+    const passcodeInput = document.getElementById('staff-passcode');
+    const modalSaveBtn = document.getElementById('staff-event-save-btn');
+    const modalDeleteBtn = document.getElementById('staff-event-delete-btn');
+    const form = document.getElementById('staff-event-form');
+
+    staffCalendarState = {
+        monthOffset: 0,
+        selectedDate: normalizeStaffDate(new Date()),
+        selectedEventId: null,
+        unlocked: localStorage.getItem(STAFF_CALENDAR_UNLOCK_KEY) === 'true',
+        events: loadStaffEvents()
+    };
+    window.staffCalendarState = staffCalendarState;
+
+    if (staffCalendarState.unlocked) {
+        if (lockCard) lockCard.classList.add('hidden');
+        if (dashboard) dashboard.classList.remove('hidden');
+    }
+
+    if (unlockBtn && passcodeInput) {
+        unlockBtn.addEventListener('click', unlockStaffCalendar);
+        passcodeInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                unlockStaffCalendar();
+            }
+        });
+    }
+
+    if (modalSaveBtn) {
+        modalSaveBtn.addEventListener('click', saveStaffEvent);
+    }
+
+    if (modalDeleteBtn) {
+        modalDeleteBtn.addEventListener('click', deleteStaffEvent);
+    }
+
+    if (form) {
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            saveStaffEvent();
+        });
+    }
+
+    document.addEventListener('keydown', handleStaffModalEscape);
+
+    renderStaffCalendar();
+    renderStaffEventList();
+}
+
+function unlockStaffCalendar() {
+    const passcodeInput = document.getElementById('staff-passcode');
+    const lockCard = document.getElementById('staff-lock-card');
+    const dashboard = document.getElementById('staff-dashboard');
+
+    if (!passcodeInput) return;
+
+    const passcode = passcodeInput.value.trim();
+    if (passcode !== STAFF_CALENDAR_PASSCODE) {
+        alert('직원 코드가 올바르지 않습니다.');
+        passcodeInput.focus();
+        return;
+    }
+
+    localStorage.setItem(STAFF_CALENDAR_UNLOCK_KEY, 'true');
+    if (staffCalendarState) {
+        staffCalendarState.unlocked = true;
+    }
+
+    if (lockCard) lockCard.classList.add('hidden');
+    if (dashboard) dashboard.classList.remove('hidden');
+    renderStaffCalendar();
+    renderStaffEventList();
+}
+
+function staffChangeMonth(delta) {
+    if (!staffCalendarState) return;
+    staffCalendarState.monthOffset += delta;
+    window.staffCalendarState = staffCalendarState;
+    renderStaffCalendar();
+}
+
+function staffGoToToday() {
+    if (!staffCalendarState) return;
+    staffCalendarState.monthOffset = 0;
+    staffCalendarState.selectedDate = normalizeStaffDate(new Date());
+    window.staffCalendarState = staffCalendarState;
+    renderStaffCalendar();
+    renderStaffEventList();
+}
+
+function staffResetCalendar() {
+    staffGoToToday();
+}
+
+function renderStaffCalendar() {
+    const grid = document.getElementById('staff-calendar-grid');
+    const monthLabel = document.getElementById('staff-calendar-month-label');
+    const selectedLabel = document.getElementById('staff-selected-date-label');
+    const daySummary = document.getElementById('staff-day-summary');
+
+    if (!grid || !monthLabel || !selectedLabel || !daySummary || !staffCalendarState) return;
+
+    const baseDate = getCurrentMonthDate(new Date(), staffCalendarState.monthOffset);
+    const year = baseDate.getFullYear();
+    const month = baseDate.getMonth();
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = normalizeStaffDate(new Date());
+
+    monthLabel.textContent = formatStaffMonthLabel(baseDate);
+    selectedLabel.textContent = staffCalendarState.selectedDate ? formatStaffDateLabel(staffCalendarState.selectedDate) : '날짜를 선택하세요';
+
+    grid.innerHTML = '';
+
+    for (let i = 0; i < firstDayIndex; i += 1) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'min-h-[104px] sm:min-h-[118px] rounded-2xl border border-transparent';
+        grid.appendChild(emptyCell);
+    }
+
+    for (let day = 1; day <= daysInMonth; day += 1) {
+        const currentDate = normalizeStaffDate(new Date(year, month, day));
+        const events = staffCalendarState.events.filter(event => isStaffEventOnDate(event, currentDate)).sort(sortStaffEvents);
+        const isSelected = currentDate === staffCalendarState.selectedDate;
+        const isToday = currentDate === today;
+
+        const cell = document.createElement('button');
+        cell.type = 'button';
+        cell.className = `staff-calendar-day text-left min-h-[104px] sm:min-h-[118px] rounded-2xl border p-3 sm:p-4 transition ${isSelected ? 'border-water-500 bg-water-50 shadow-lg shadow-water-100' : 'border-slate-200 bg-white hover:border-water-300 hover:shadow-md'} ${isToday ? 'ring-2 ring-cyan-400/40' : ''}`;
+        cell.addEventListener('click', () => {
+            staffCalendarState.selectedDate = currentDate;
+            staffCalendarState.selectedEventId = events[0] ? events[0].id : null;
+            window.staffCalendarState = staffCalendarState;
+            renderStaffCalendar();
+            renderStaffEventList();
+        });
+
+        const titleRow = document.createElement('div');
+        titleRow.className = 'flex items-start justify-between gap-2 mb-2';
+
+        const dayNumber = document.createElement('span');
+        dayNumber.className = `text-sm sm:text-base font-black ${isToday ? 'text-water-700' : 'text-slate-800'}`;
+        dayNumber.textContent = String(day);
+
+        const markerWrap = document.createElement('div');
+        markerWrap.className = 'flex items-center gap-1';
+        if (isToday) {
+            const todayBadge = document.createElement('span');
+            todayBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500 text-white';
+            todayBadge.textContent = 'TODAY';
+            markerWrap.appendChild(todayBadge);
+        }
+        if (events.length > 3) {
+            const moreBadge = document.createElement('span');
+            moreBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600';
+            moreBadge.textContent = `+${events.length - 3}`;
+            markerWrap.appendChild(moreBadge);
+        }
+
+        titleRow.appendChild(dayNumber);
+        titleRow.appendChild(markerWrap);
+        cell.appendChild(titleRow);
+
+        const eventStack = document.createElement('div');
+        eventStack.className = 'space-y-1.5';
+        events.slice(0, 3).forEach(event => {
+            const chip = document.createElement('div');
+            chip.className = `staff-event-chip text-[11px] font-bold rounded-lg border px-2 py-1 ${getStaffCategoryClasses(event.category)}`;
+            chip.textContent = event.title;
+            chip.title = `${event.title} · ${formatStaffDateTime(event.startDate, event.startTime)}`;
+            chip.addEventListener('click', (clickEvent) => {
+                clickEvent.stopPropagation();
+                openStaffEventEditor('edit', event.id);
+            });
+            eventStack.appendChild(chip);
+        });
+
+        if (events.length === 0) {
+            const emptyHint = document.createElement('div');
+            emptyHint.className = 'mt-4 text-[11px] text-slate-400';
+            emptyHint.textContent = '일정 없음';
+            eventStack.appendChild(emptyHint);
+        }
+
+        cell.appendChild(eventStack);
+        grid.appendChild(cell);
+    }
+
+    renderStaffDaySummary();
+}
+
+function renderStaffDaySummary() {
+    const daySummary = document.getElementById('staff-day-summary');
+    if (!daySummary || !staffCalendarState) return;
+
+    const selectedEvents = staffCalendarState.events.filter(event => isStaffEventOnDate(event, staffCalendarState.selectedDate)).sort(sortStaffEvents);
+    if (selectedEvents.length === 0) {
+        daySummary.innerHTML = '<p class="text-slate-300">선택한 날짜에 등록된 일정이 없습니다.</p>';
+        return;
+    }
+
+    daySummary.innerHTML = '';
+    selectedEvents.forEach(event => {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'w-full text-left rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition p-4';
+        card.addEventListener('click', () => openStaffEventEditor('edit', event.id));
+
+        card.innerHTML = `
+            <div class="flex items-start justify-between gap-3">
+                <div class="space-y-1">
+                    <div class="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full border ${getStaffCategoryClasses(event.category)}">${getStaffCategoryLabel(event.category)}</div>
+                    <h4 class="font-black text-white text-base leading-snug">${escapeHtml(event.title)}</h4>
+                    <p class="text-slate-300 text-xs">${escapeHtml(formatStaffDateTime(event.startDate, event.startTime))}${event.endDate !== event.startDate ? ` ~ ${escapeHtml(formatStaffDateTime(event.endDate, event.endTime))}` : event.endTime ? ` ~ ${escapeHtml(event.endTime)}` : ''}</p>
+                    ${event.location ? `<p class="text-slate-300 text-xs">${escapeHtml(event.location)}</p>` : ''}
+                </div>
+                <i class="fa-solid fa-pen-to-square text-cyan-300"></i>
+            </div>
+        `;
+        daySummary.appendChild(card);
+    });
+}
+
+function renderStaffEventList() {
+    const list = document.getElementById('staff-event-list');
+    if (!list || !staffCalendarState) return;
+
+    const upcoming = [...staffCalendarState.events]
+        .filter(event => event.endDate >= normalizeStaffDate(new Date()))
+        .sort(sortStaffEvents)
+        .slice(0, 8);
+
+    if (upcoming.length === 0) {
+        list.innerHTML = '<p class="text-slate-500 text-sm">등록된 일정이 없습니다. 새 일정을 추가해 주세요.</p>';
+        return;
+    }
+
+    list.innerHTML = '';
+    upcoming.forEach(event => {
+        const row = document.createElement('button');
+        row.type = 'button';
+        row.className = 'w-full text-left rounded-2xl border border-slate-200 p-4 hover:border-water-300 hover:shadow-md transition bg-slate-50/60';
+        row.addEventListener('click', () => openStaffEventEditor('edit', event.id));
+
+        row.innerHTML = `
+            <div class="flex items-start justify-between gap-4">
+                <div class="space-y-2 min-w-0">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border ${getStaffCategoryClasses(event.category)}">${getStaffCategoryLabel(event.category)}</span>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200">${event.share === 'team' ? '부서 공유' : '직원 공유'}</span>
+                    </div>
+                    <h4 class="font-black text-slate-900 leading-snug truncate">${escapeHtml(event.title)}</h4>
+                    <p class="text-sm text-slate-500">${escapeHtml(formatStaffDateTime(event.startDate, event.startTime))}${event.endDate !== event.startDate ? ` ~ ${escapeHtml(formatStaffDateTime(event.endDate, event.endTime))}` : event.endTime ? ` ~ ${escapeHtml(event.endTime)}` : ''}</p>
+                    ${event.location ? `<p class="text-xs text-slate-400">${escapeHtml(event.location)}</p>` : ''}
+                </div>
+                <i class="fa-solid fa-chevron-right text-slate-400 mt-1"></i>
+            </div>
+        `;
+        list.appendChild(row);
+    });
+}
+
+function openStaffEventEditor(mode = 'create', eventId = null, dateValue = null) {
+    if (!staffCalendarState || !staffCalendarState.unlocked) {
+        alert('직원 전용 구역은 먼저 잠금을 해제해야 합니다.');
+        return;
+    }
+
+    const modal = document.getElementById('staff-event-modal');
+    const title = document.getElementById('staff-event-modal-title');
+    const subtitle = document.getElementById('staff-event-modal-subtitle');
+    const deleteBtn = document.getElementById('staff-event-delete-btn');
+    const idField = document.getElementById('staff-event-id');
+    const titleField = document.getElementById('staff-event-title');
+    const categoryField = document.getElementById('staff-event-category');
+    const shareField = document.getElementById('staff-event-share');
+    const startDateField = document.getElementById('staff-event-start-date');
+    const endDateField = document.getElementById('staff-event-end-date');
+    const startTimeField = document.getElementById('staff-event-start-time');
+    const endTimeField = document.getElementById('staff-event-end-time');
+    const locationField = document.getElementById('staff-event-location');
+    const notesField = document.getElementById('staff-event-notes');
+
+    if (!modal || !title || !subtitle || !deleteBtn || !idField || !titleField || !categoryField || !shareField || !startDateField || !endDateField || !startTimeField || !endTimeField || !locationField || !notesField) return;
+
+    const eventData = mode === 'edit' ? staffCalendarState.events.find(event => event.id === eventId) : null;
+    const fallbackDate = dateValue || staffCalendarState.selectedDate || normalizeStaffDate(new Date());
+
+    subtitle.textContent = mode === 'edit' ? 'Edit Schedule' : 'Shared Schedule';
+    title.textContent = mode === 'edit' ? '일정 수정' : '일정 추가';
+    deleteBtn.classList.toggle('hidden', mode !== 'edit');
+    idField.value = eventData ? eventData.id : '';
+    titleField.value = eventData ? eventData.title : '';
+    categoryField.value = eventData ? eventData.category : 'meeting';
+    shareField.value = eventData ? eventData.share : 'internal';
+    startDateField.value = eventData ? eventData.startDate : fallbackDate;
+    endDateField.value = eventData ? eventData.endDate : fallbackDate;
+    startTimeField.value = eventData ? eventData.startTime : '';
+    endTimeField.value = eventData ? eventData.endTime : '';
+    locationField.value = eventData ? eventData.location : '';
+    notesField.value = eventData ? eventData.notes : '';
+
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => titleField.focus(), 50);
+}
+
+function closeStaffEventEditor() {
+    const modal = document.getElementById('staff-event-modal');
+    if (modal) modal.classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+function saveStaffEvent() {
+    if (!staffCalendarState || !staffCalendarState.unlocked) return;
+
+    const idField = document.getElementById('staff-event-id');
+    const titleField = document.getElementById('staff-event-title');
+    const categoryField = document.getElementById('staff-event-category');
+    const shareField = document.getElementById('staff-event-share');
+    const startDateField = document.getElementById('staff-event-start-date');
+    const endDateField = document.getElementById('staff-event-end-date');
+    const startTimeField = document.getElementById('staff-event-start-time');
+    const endTimeField = document.getElementById('staff-event-end-time');
+    const locationField = document.getElementById('staff-event-location');
+    const notesField = document.getElementById('staff-event-notes');
+
+    if (!idField || !titleField || !categoryField || !shareField || !startDateField || !endDateField || !startTimeField || !endTimeField || !locationField || !notesField) return;
+
+    const title = titleField.value.trim();
+    const startDate = startDateField.value;
+    const endDate = endDateField.value || startDate;
+
+    if (!title) {
+        alert('일정 제목을 입력해 주세요.');
+        titleField.focus();
+        return;
+    }
+
+    if (!startDate) {
+        alert('시작 날짜를 입력해 주세요.');
+        startDateField.focus();
+        return;
+    }
+
+    if (endDate < startDate) {
+        alert('종료 날짜는 시작 날짜보다 빠를 수 없습니다.');
+        endDateField.focus();
+        return;
+    }
+
+    const eventId = idField.value || `staff-${Date.now()}`;
+    const nextEvent = {
+        id: eventId,
+        title,
+        category: categoryField.value,
+        share: shareField.value,
+        startDate,
+        endDate,
+        startTime: startTimeField.value,
+        endTime: endTimeField.value,
+        location: locationField.value.trim(),
+        notes: notesField.value.trim()
+    };
+
+    const existingIndex = staffCalendarState.events.findIndex(event => event.id === eventId);
+    if (existingIndex >= 0) {
+        staffCalendarState.events[existingIndex] = nextEvent;
+    } else {
+        staffCalendarState.events.push(nextEvent);
+    }
+
+    saveStaffEvents(staffCalendarState.events);
+    localStorage.setItem(STAFF_CALENDAR_UNLOCK_KEY, 'true');
+    window.staffCalendarState = staffCalendarState;
+
+    renderStaffCalendar();
+    renderStaffEventList();
+    closeStaffEventEditor();
+    if (window._siteSearchIndex) {
+        window._siteSearchIndex = buildSearchIndex();
+    }
+}
+
+function deleteStaffEvent() {
+    if (!staffCalendarState || !staffCalendarState.unlocked) return;
+
+    const idField = document.getElementById('staff-event-id');
+    if (!idField || !idField.value) return;
+
+    const confirmed = confirm('이 일정을 삭제하시겠습니까?');
+    if (!confirmed) return;
+
+    staffCalendarState.events = staffCalendarState.events.filter(event => event.id !== idField.value);
+    saveStaffEvents(staffCalendarState.events);
+    window.staffCalendarState = staffCalendarState;
+
+    renderStaffCalendar();
+    renderStaffEventList();
+    closeStaffEventEditor();
+    if (window._siteSearchIndex) {
+        window._siteSearchIndex = buildSearchIndex();
+    }
+}
+
+function handleStaffModalEscape(event) {
+    const modal = document.getElementById('staff-event-modal');
+    if (!modal || modal.classList.contains('hidden')) return;
+
+    if (event.key === 'Escape') {
+        closeStaffEventEditor();
+    }
+}
 
 const productDetails = {
     booster: {
