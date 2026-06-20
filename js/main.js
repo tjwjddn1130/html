@@ -1365,9 +1365,11 @@ function initHeroWaves() {
    ========================================================================== */
 function initInquiryForm() {
     const form = document.getElementById('inquiry-form');
+    const submitBtn = document.getElementById('inquiry-submit-btn');
+    const statusText = document.getElementById('inquiry-status');
     if (!form) return;
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         // Retrieve field values
@@ -1439,24 +1441,62 @@ function initInquiryForm() {
             return;
         }
 
-        const subject = encodeURIComponent(`[비에이텍 문의] ${type} - ${name}`);
-        const body = encodeURIComponent([
-            '비에이텍 홈페이지 문의가 도착했습니다.',
-            '',
-            `성함 / 업체명: ${name}`,
-            `연락처: ${phone}`,
-            `고객 이메일: ${email}`,
-            `문의 유형: ${type}`,
-            '',
-            '문의 내용:',
-            message
-        ].join('\n'));
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
+        }
 
-        alert('메일 작성 창을 열었습니다. 전송 버튼을 누르면 tjwjddn1130@gmail.com으로 문의가 전달됩니다.');
+        if (statusText) {
+            statusText.textContent = '문의 내용을 전송 중입니다...';
+            statusText.classList.remove('text-emerald-600', 'text-red-500');
+            statusText.classList.add('text-slate-500');
+        }
 
-        window.location.href = `mailto:tjwjddn1130@gmail.com?subject=${subject}&body=${body}`;
+        try {
+            const response = await fetch('https://formsubmit.co/ajax/tjwjddn1130@gmail.com', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    _subject: `[비에이텍 문의] ${type} - ${name}`,
+                    _captcha: 'false',
+                    _template: 'table',
+                    name,
+                    phone,
+                    email,
+                    type,
+                    message
+                })
+            });
 
-        form.reset();
+            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(result?.message || '문의 전송에 실패했습니다.');
+            }
+
+            if (statusText) {
+                statusText.textContent = '문의가 접수되었습니다. tjwjddn1130@gmail.com으로 바로 전달되었습니다.';
+                statusText.classList.remove('text-slate-500', 'text-red-500');
+                statusText.classList.add('text-emerald-600');
+            }
+
+            form.reset();
+        } catch (error) {
+            console.error(error);
+            if (statusText) {
+                statusText.textContent = '전송에 실패했습니다. 잠시 후 다시 시도해 주세요.';
+                statusText.classList.remove('text-slate-500', 'text-emerald-600');
+                statusText.classList.add('text-red-500');
+            }
+            alert('문의 전송에 실패했습니다. 네트워크 상태를 확인한 뒤 다시 시도해 주세요.');
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+            }
+        }
     });
 }
 
