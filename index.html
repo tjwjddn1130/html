@@ -759,25 +759,33 @@
             <!-- Certs Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Cert 1 -->
-                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:shadow-xl transition-all duration-300">
-                    <div class="w-12 h-12 bg-water-100 rounded-xl flex items-center justify-center text-water-600 mb-6 font-bold text-xl">
-                        <i class="fa-solid fa-stamp"></i>
+                <button type="button" onclick="openGalleryModal('홈페이지 자료/ISO9001인증서.pdf', 'ISO 9001 품질 경영 인증서', '실제 업로드된 ISO 9001 인증서를 클릭해서 확인할 수 있습니다.')" class="text-left bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-12 h-12 bg-water-100 rounded-xl flex items-center justify-center text-water-600 mb-6 font-bold text-xl group-hover:bg-water-600 group-hover:text-white transition-all">
+                        <i class="fa-solid fa-file-certificate"></i>
+                    </div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-water-50 text-water-700 border border-water-100">PDF 문서</span>
+                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Click to view</span>
                     </div>
                     <h3 class="text-lg font-bold text-slate-800 mb-2">ISO 9001 품질 경영</h3>
                     <p class="text-slate-500 text-xs sm:text-sm leading-relaxed">
                         부스터 펌프 설계, 조립, 판넬 결선 등 기공 공정 전반에 대해 국제 품질 보증 규격(ISO 9001)에 따른 엄격한 제품 관리 시스템을 유지합니다.
                     </p>
-                </div>
+                </button>
                 <!-- Cert 2 -->
-                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:shadow-xl transition-all duration-300">
-                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 mb-6 font-bold text-xl">
-                        <i class="fa-solid fa-faucet"></i>
+                <button type="button" onclick="openGalleryModal('홈페이지 자료/KC인증서.pdf', 'KC 위생안전기준 인증서', '실제 업로드된 KC 인증서를 클릭해서 확인할 수 있습니다.')" class="text-left bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 mb-6 font-bold text-xl group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">PDF 문서</span>
+                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Click to view</span>
                     </div>
                     <h3 class="text-lg font-bold text-slate-800 mb-2">KC 위생안전기준 인증</h3>
                     <p class="text-slate-500 text-xs sm:text-sm leading-relaxed">
                         사람들이 음용하는 맑은 급수 시스템의 안정성 확보를 위해, 배관 접촉부의 전 소재(SUS304 이상)에 대한 KC 위생안전기준 승인을 필했습니다.
                     </p>
-                </div>
+                </button>
                 <!-- Cert 3 -->
                 <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:shadow-xl transition-all duration-300">
                     <div class="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center text-cyan-600 mb-6 font-bold text-xl">
@@ -1141,6 +1149,7 @@
             <!-- Image View -->
             <div class="relative bg-slate-950 flex items-center justify-center min-h-[250px] sm:min-h-[400px]">
                 <img id="gallery-modal-img" src="" alt="" class="max-h-[60vh] object-contain">
+                <iframe id="gallery-modal-frame" src="" title="문서 보기" class="hidden w-full h-[60vh] bg-white"></iframe>
             </div>
             
             <!-- Description Panel -->
@@ -1156,9 +1165,12 @@
             </div>
             
             <!-- Modal Footer -->
-            <div class="bg-slate-50 px-6 sm:px-8 py-4 flex justify-end border-t border-slate-100">
+            <div class="bg-slate-50 px-6 sm:px-8 py-4 flex flex-col sm:flex-row justify-end gap-3 border-t border-slate-100">
+                <a id="gallery-modal-open-btn" href="#" target="_blank" rel="noreferrer" class="px-6 py-2.5 bg-white border border-slate-200 text-slate-700 font-bold text-sm rounded-xl shadow-sm hover:bg-slate-50 transition text-center">
+                    원본 새 창으로 열기
+                </a>
                 <button onclick="closeGalleryModal()" class="px-6 py-2.5 bg-water-600 hover:bg-water-700 text-white font-bold text-sm rounded-xl shadow-md transition">
-                    확인
+                    닫기
                 </button>
             </div>
         </div>

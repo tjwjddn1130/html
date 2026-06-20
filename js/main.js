@@ -278,6 +278,9 @@ const productsData = [
     {
         id: "booster",
         category: "booster",
+        image: "images/brochure.png",
+        imageAlt: "브로슈어 속 부스터 펌프 실물 사진",
+        imageFocus: "24% 72%",
         badge: "인버터 제어",
         badgeColor: "bg-water-500",
         icon: "fa-solid fa-server",
@@ -289,6 +292,9 @@ const productsData = [
     {
         id: "deepwell",
         category: "submersible",
+        image: "images/brochure.png",
+        imageAlt: "브로슈어 표지 이미지",
+        imageFocus: "20% 28%",
         badge: "심정용 수중",
         badgeColor: "bg-cyan-500",
         icon: "fa-solid fa-anchor",
@@ -300,6 +306,9 @@ const productsData = [
     {
         id: "centrifugal",
         category: "centrifugal",
+        image: "images/brochure.png",
+        imageAlt: "브로슈어 속 원심 펌프 실물 사진",
+        imageFocus: "64% 72%",
         badge: "다단 원심형",
         badgeColor: "bg-emerald-500",
         icon: "fa-solid fa-gears",
@@ -311,6 +320,9 @@ const productsData = [
     {
         id: "wastewater",
         category: "submersible",
+        image: "images/brochure.png",
+        imageAlt: "브로슈어 내 제품 안내 페이지",
+        imageFocus: "50% 72%",
         badge: "오배수 처리",
         badgeColor: "bg-orange-500",
         icon: "fa-solid fa-trash-can",
@@ -322,6 +334,9 @@ const productsData = [
     {
         id: "volute",
         category: "centrifugal",
+        image: "images/brochure.png",
+        imageAlt: "브로슈어 속 품질 인증 이미지",
+        imageFocus: "74% 72%",
         badge: "단단 원심형",
         badgeColor: "bg-blue-500",
         icon: "fa-solid fa-hurricane",
@@ -333,6 +348,9 @@ const productsData = [
     {
         id: "panel",
         category: "booster",
+        image: "images/brochure.png",
+        imageAlt: "브로슈어 소개 페이지",
+        imageFocus: "64% 26%",
         badge: "제어 판넬",
         badgeColor: "bg-teal-500",
         icon: "fa-solid fa-tower-broadcast",
@@ -1002,16 +1020,24 @@ function renderProducts() {
         card.className = 'product-card bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-2xl transition duration-300 transform hover:-translate-y-1';
         card.setAttribute('data-category', p.category);
         card.innerHTML = `
-            <div class="relative h-60 bg-gradient-to-br from-slate-100 to-water-50 flex items-center justify-center p-6">
-                <i class="${p.icon} ${p.iconColor} text-7xl opacity-80"></i>
+            <button type="button" onclick="openGalleryModal('${p.image}', '${p.imageAlt}', '${p.title} 브로슈어 실물 사진을 확인해 보세요.')" class="relative block w-full h-64 overflow-hidden bg-slate-100 group text-left">
+                <img src="${p.image}" alt="${p.imageAlt}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" style="object-position: ${p.imageFocus};" onerror="this.src='https://placehold.co/1200x900/0f172a/ffffff?text=Biatech+Product';">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/15 to-transparent"></div>
+                <div class="absolute top-4 left-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 text-slate-800 text-xs font-black shadow-sm backdrop-blur">
+                    <i class="fa-solid fa-camera text-water-600"></i> 실물 사진
+                </div>
                 <span class="absolute top-4 right-4 ${p.badgeColor} text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">${p.badge}</span>
-            </div>
+                <div class="absolute bottom-4 left-4 right-4 text-white">
+                    <p class="text-[11px] uppercase tracking-[0.2em] text-cyan-200/90 font-bold">Click to view</p>
+                    <p class="text-sm font-bold leading-snug mt-1">${p.title}</p>
+                </div>
+            </button>
             <div class="p-6">
                 <h4 class="text-xl font-bold text-slate-800">${p.title}</h4>
-                <p class="text-slate-500 text-sm mt-2 line-clamp-2">${p.desc}</p>
-                <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
+                <p class="text-slate-500 text-sm mt-2 leading-relaxed">${p.desc}</p>
+                <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
                     <span class="text-xs font-bold text-slate-400">${p.tag}</span>
-                    <button onclick="openProductDetail('${p.id}')" class="text-sm font-bold text-water-600 hover:text-water-700 flex items-center gap-1 group">
+                    <button onclick="openProductDetail('${p.id}')" class="text-sm font-bold text-water-600 hover:text-water-700 flex items-center gap-1 group shrink-0">
                         제품 정보 <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
                     </button>
                 </div>
@@ -1140,13 +1166,31 @@ function filterHistory(type) {
 function openGalleryModal(imgSrc, title, desc) {
     const modal = document.getElementById('gallery-modal');
     const modalImg = document.getElementById('gallery-modal-img');
+    const modalFrame = document.getElementById('gallery-modal-frame');
     const modalTitle = document.getElementById('gallery-modal-title');
     const modalDesc = document.getElementById('gallery-modal-desc');
+    const modalOpenBtn = document.getElementById('gallery-modal-open-btn');
 
-    if (!modal || !modalImg || !modalTitle || !modalDesc) return;
+    if (!modal || !modalImg || !modalFrame || !modalTitle || !modalDesc || !modalOpenBtn) return;
 
-    modalImg.src = imgSrc;
-    modalImg.alt = title;
+    const isPdf = /\.pdf($|\?)/i.test(imgSrc);
+
+    if (isPdf) {
+        modalImg.classList.add('hidden');
+        modalImg.removeAttribute('src');
+        modalFrame.classList.remove('hidden');
+        modalFrame.src = imgSrc;
+        modalOpenBtn.href = imgSrc;
+        modalOpenBtn.textContent = '문서 새 창으로 열기';
+    } else {
+        modalFrame.classList.add('hidden');
+        modalFrame.removeAttribute('src');
+        modalImg.classList.remove('hidden');
+        modalImg.src = imgSrc;
+        modalImg.alt = title;
+        modalOpenBtn.href = imgSrc;
+        modalOpenBtn.textContent = '원본 새 창으로 열기';
+    }
     modalTitle.innerText = title;
     modalDesc.innerText = desc;
 
@@ -1156,8 +1200,17 @@ function openGalleryModal(imgSrc, title, desc) {
 
 function closeGalleryModal() {
     const modal = document.getElementById('gallery-modal');
+    const modalImg = document.getElementById('gallery-modal-img');
+    const modalFrame = document.getElementById('gallery-modal-frame');
     if (modal) {
         modal.classList.add('hidden');
+    }
+    if (modalImg) {
+        modalImg.removeAttribute('src');
+    }
+    if (modalFrame) {
+        modalFrame.removeAttribute('src');
+        modalFrame.classList.add('hidden');
     }
     document.body.style.overflow = '';
 }
