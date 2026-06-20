@@ -101,7 +101,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // 5-2. Initialize Staff Calendar
     initStaffCalendar();
 
-    // 5-3. Setup Search Interaction
+    // 5-3. Initialize Staff Board
+    initStaffBoard();
+
+    // 5-4. Setup Search Interaction
     initSearch();
 
     // 6. Render Dynamic Products Grid
@@ -429,7 +432,42 @@ const staffCalendarSeedEvents = [
     }
 ];
 
+const STAFF_BOARD_STORAGE_KEY = 'batech_staff_board_posts';
+const staffBoardSeedPosts = [
+    {
+        id: 'board-001',
+        title: '7월 설비 점검 주간 안내',
+        category: 'notice',
+        audience: 'all',
+        pinned: true,
+        author: '관리자',
+        publishDate: '2026-06-20',
+        content: '7월 첫째 주에는 주요 생산 설비와 테스트 벤치 점검이 예정되어 있습니다. 부서별 일정이 겹치지 않도록 사전 조율 부탁드립니다.'
+    },
+    {
+        id: 'board-002',
+        title: '출하 전 확인 체크리스트 공유',
+        category: 'share',
+        audience: 'team',
+        pinned: false,
+        author: '생산부',
+        publishDate: '2026-06-18',
+        content: '출하 전 포장, 라벨, 성적서, 배관 부속품 확인 항목을 정리했습니다. 현장 출하 전 체크리스트로 활용해 주세요.'
+    },
+    {
+        id: 'board-003',
+        title: '청소 및 정리 담당 구역 안내',
+        category: 'memo',
+        audience: 'internal',
+        pinned: false,
+        author: '총무',
+        publishDate: '2026-06-17',
+        content: '공용 작업 구역과 회의실 정리 담당 구역을 다시 분배했습니다. 매주 금요일 퇴근 전 정리 상태를 확인해 주세요.'
+    }
+];
+
 let staffCalendarState = null;
+let staffBoardState = null;
 
 function normalizeStaffDate(value) {
     if (!value) return '';
@@ -514,6 +552,23 @@ function saveStaffEvents(events) {
     localStorage.setItem(STAFF_CALENDAR_STORAGE_KEY, JSON.stringify(events));
 }
 
+function loadStaffBoardPosts() {
+    try {
+        const raw = localStorage.getItem(STAFF_BOARD_STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : null;
+        if (Array.isArray(parsed)) {
+            return parsed.map(post => ({ ...post }));
+        }
+    } catch (error) {
+        console.warn('Failed to load staff board posts', error);
+    }
+    return staffBoardSeedPosts.map(post => ({ ...post }));
+}
+
+function saveStaffBoardPosts(posts) {
+    localStorage.setItem(STAFF_BOARD_STORAGE_KEY, JSON.stringify(posts));
+}
+
 function initStaffCalendar() {
     const lockCard = document.getElementById('staff-lock-card');
     const dashboard = document.getElementById('staff-dashboard');
@@ -568,6 +623,59 @@ function initStaffCalendar() {
     renderStaffEventList();
 }
 
+function initStaffBoard() {
+    staffBoardState = {
+        unlocked: localStorage.getItem(STAFF_CALENDAR_UNLOCK_KEY) === 'true',
+        posts: loadStaffBoardPosts()
+    };
+    window.staffBoardState = staffBoardState;
+
+    const saveBtn = document.getElementById('staff-board-save-btn');
+    const deleteBtn = document.getElementById('staff-board-delete-btn');
+    const form = document.getElementById('staff-board-form');
+
+    if (saveBtn) {
+        saveBtn.addEventListener('click', saveStaffBoardPost);
+    }
+
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', deleteStaffBoardPost);
+    }
+
+    if (form) {
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            saveStaffBoardPost();
+        });
+    }
+
+    renderStaffBoard();
+    switchStaffPanel('calendar');
+}
+
+function switchStaffPanel(panelId) {
+    const calendarPanel = document.getElementById('staff-calendar-panel');
+    const boardPanel = document.getElementById('staff-board-panel');
+    const tabs = document.querySelectorAll('[data-staff-tab]');
+
+    if (calendarPanel) calendarPanel.classList.toggle('hidden', panelId !== 'calendar');
+    if (boardPanel) boardPanel.classList.toggle('hidden', panelId !== 'board');
+
+    tabs.forEach(tab => {
+        const isActive = tab.getAttribute('data-staff-tab') === panelId;
+        tab.classList.toggle('bg-white/10', isActive);
+        tab.classList.toggle('text-white', isActive);
+        tab.classList.toggle('text-slate-300', !isActive);
+    });
+
+    if (panelId === 'board') {
+        renderStaffBoard();
+    } else {
+        renderStaffCalendar();
+        renderStaffEventList();
+    }
+}
+
 function unlockStaffCalendar() {
     const passcodeInput = document.getElementById('staff-passcode');
     const lockCard = document.getElementById('staff-lock-card');
@@ -589,8 +697,13 @@ function unlockStaffCalendar() {
 
     if (lockCard) lockCard.classList.add('hidden');
     if (dashboard) dashboard.classList.remove('hidden');
+    if (staffBoardState) {
+        staffBoardState.unlocked = true;
+        window.staffBoardState = staffBoardState;
+    }
     renderStaffCalendar();
     renderStaffEventList();
+    renderStaffBoard();
 }
 
 function staffChangeMonth(delta) {
@@ -781,6 +894,238 @@ function renderStaffEventList() {
     });
 }
 
+function getStaffBoardCategoryLabel(category) {
+    const labels = {
+        notice: '공지',
+        memo: '메모',
+        maintenance: '점검',
+        share: '자료공유'
+    };
+    return labels[category] || '게시글';
+}
+
+function getStaffBoardCategoryClasses(category) {
+    const classes = {
+        notice: 'bg-water-50 text-water-700 border-water-200',
+        memo: 'bg-slate-100 text-slate-700 border-slate-200',
+        maintenance: 'bg-amber-50 text-amber-700 border-amber-200',
+        share: 'bg-emerald-50 text-emerald-700 border-emerald-200'
+    };
+    return classes[category] || 'bg-slate-100 text-slate-700 border-slate-200';
+}
+
+function formatStaffBoardDate(dateString) {
+    if (!dateString) return '';
+    const date = new Date(`${dateString}T00:00:00`);
+    return new Intl.DateTimeFormat('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' }).format(date);
+}
+
+function renderStaffBoard() {
+    const list = document.getElementById('staff-board-list');
+    const highlight = document.getElementById('staff-board-highlight');
+    const totalCount = document.getElementById('staff-board-total-count');
+    const pinnedCount = document.getElementById('staff-board-pinned-count');
+
+    if (!list || !staffBoardState) return;
+
+    const posts = [...staffBoardState.posts].sort((a, b) => {
+        if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
+        return new Date(`${b.publishDate}T00:00:00`) - new Date(`${a.publishDate}T00:00:00`);
+    });
+
+    if (totalCount) totalCount.textContent = String(posts.length);
+    if (pinnedCount) pinnedCount.textContent = String(posts.filter(post => post.pinned).length);
+
+    if (posts.length === 0) {
+        list.innerHTML = '<p class="text-slate-500 text-sm">게시글이 없습니다. 새 글을 작성해 주세요.</p>';
+        if (highlight) highlight.innerHTML = '<p class="text-slate-500 text-sm">등록된 공지가 없습니다.</p>';
+        return;
+    }
+
+    if (highlight) {
+        highlight.innerHTML = '';
+        const fixedPosts = posts.filter(post => post.pinned).slice(0, 2);
+        if (fixedPosts.length === 0) {
+            highlight.innerHTML = '<p class="text-slate-500 text-sm">고정 공지가 없습니다.</p>';
+        } else {
+            fixedPosts.forEach(post => {
+                const item = document.createElement('button');
+                item.type = 'button';
+                item.className = 'w-full text-left rounded-2xl border border-slate-200 p-4 hover:border-water-300 hover:shadow-md transition bg-slate-50/80';
+                item.addEventListener('click', () => openStaffBoardEditor('edit', post.id));
+                item.innerHTML = `
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="space-y-1 min-w-0">
+                            <div class="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full border ${getStaffBoardCategoryClasses(post.category)}">${getStaffBoardCategoryLabel(post.category)}</div>
+                            <h4 class="font-black text-slate-900 leading-snug truncate">${escapeHtml(post.title)}</h4>
+                            <p class="text-xs text-slate-500">${escapeHtml(formatStaffBoardDate(post.publishDate))} · ${escapeHtml(post.author || '작성자 미지정')}</p>
+                        </div>
+                        <i class="fa-solid fa-thumbtack text-water-600"></i>
+                    </div>
+                `;
+                highlight.appendChild(item);
+            });
+        }
+    }
+
+    list.innerHTML = '';
+    posts.forEach(post => {
+        const row = document.createElement('button');
+        row.type = 'button';
+        row.className = 'w-full text-left rounded-2xl border border-slate-200 p-4 hover:border-water-300 hover:shadow-md transition bg-slate-50/60';
+        row.addEventListener('click', () => openStaffBoardEditor('edit', post.id));
+
+        row.innerHTML = `
+            <div class="flex items-start justify-between gap-4">
+                <div class="space-y-2 min-w-0 flex-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold border ${getStaffBoardCategoryClasses(post.category)}">${getStaffBoardCategoryLabel(post.category)}</span>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200">${post.audience === 'team' ? '부서 공유' : post.audience === 'internal' ? '내부 참고' : '전체 직원'}</span>
+                        ${post.pinned ? '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-water-600 text-white">고정</span>' : ''}
+                    </div>
+                    <h4 class="font-black text-slate-900 leading-snug truncate">${escapeHtml(post.title)}</h4>
+                    <p class="text-sm text-slate-500">${escapeHtml(formatStaffBoardDate(post.publishDate))} · ${escapeHtml(post.author || '작성자 미지정')}</p>
+                    <p class="text-xs text-slate-400 leading-relaxed line-clamp-2">${escapeHtml(post.content || '')}</p>
+                </div>
+                <i class="fa-solid fa-chevron-right text-slate-400 mt-1"></i>
+            </div>
+        `;
+        list.appendChild(row);
+    });
+}
+
+function openStaffBoardEditor(mode = 'create', postId = null) {
+    if (!staffBoardState || !staffBoardState.unlocked) {
+        alert('직원 전용 구역은 먼저 잠금을 해제해야 합니다.');
+        return;
+    }
+
+    const modal = document.getElementById('staff-board-modal');
+    const title = document.getElementById('staff-board-modal-title');
+    const subtitle = document.getElementById('staff-board-modal-subtitle');
+    const deleteBtn = document.getElementById('staff-board-delete-btn');
+    const idField = document.getElementById('staff-board-id');
+    const titleField = document.getElementById('staff-board-title');
+    const categoryField = document.getElementById('staff-board-category');
+    const audienceField = document.getElementById('staff-board-audience');
+    const pinnedField = document.getElementById('staff-board-pinned');
+    const authorField = document.getElementById('staff-board-author');
+    const dateField = document.getElementById('staff-board-date');
+    const contentField = document.getElementById('staff-board-content');
+
+    if (!modal || !title || !subtitle || !deleteBtn || !idField || !titleField || !categoryField || !audienceField || !pinnedField || !authorField || !dateField || !contentField) return;
+
+    const postData = mode === 'edit' ? staffBoardState.posts.find(post => post.id === postId) : null;
+    const today = normalizeStaffDate(new Date());
+
+    subtitle.textContent = mode === 'edit' ? 'Edit Post' : 'Internal Board';
+    title.textContent = mode === 'edit' ? '게시글 수정' : '게시글 작성';
+    deleteBtn.classList.toggle('hidden', mode !== 'edit');
+    idField.value = postData ? postData.id : '';
+    titleField.value = postData ? postData.title : '';
+    categoryField.value = postData ? postData.category : 'notice';
+    audienceField.value = postData ? postData.audience : 'all';
+    pinnedField.checked = postData ? Boolean(postData.pinned) : false;
+    authorField.value = postData ? postData.author : '관리자';
+    dateField.value = postData ? postData.publishDate : today;
+    contentField.value = postData ? postData.content : '';
+
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => titleField.focus(), 50);
+}
+
+function closeStaffBoardEditor() {
+    const modal = document.getElementById('staff-board-modal');
+    if (modal) modal.classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+function saveStaffBoardPost() {
+    if (!staffBoardState || !staffBoardState.unlocked) return;
+
+    const idField = document.getElementById('staff-board-id');
+    const titleField = document.getElementById('staff-board-title');
+    const categoryField = document.getElementById('staff-board-category');
+    const audienceField = document.getElementById('staff-board-audience');
+    const pinnedField = document.getElementById('staff-board-pinned');
+    const authorField = document.getElementById('staff-board-author');
+    const dateField = document.getElementById('staff-board-date');
+    const contentField = document.getElementById('staff-board-content');
+
+    if (!idField || !titleField || !categoryField || !audienceField || !pinnedField || !authorField || !dateField || !contentField) return;
+
+    const title = titleField.value.trim();
+    const author = authorField.value.trim();
+    const publishDate = dateField.value;
+    const content = contentField.value.trim();
+
+    if (!title) {
+        alert('제목을 입력해 주세요.');
+        titleField.focus();
+        return;
+    }
+
+    if (!publishDate) {
+        alert('게시일을 입력해 주세요.');
+        dateField.focus();
+        return;
+    }
+
+    if (!content) {
+        alert('내용을 입력해 주세요.');
+        contentField.focus();
+        return;
+    }
+
+    const postId = idField.value || `board-${Date.now()}`;
+    const nextPost = {
+        id: postId,
+        title,
+        category: categoryField.value,
+        audience: audienceField.value,
+        pinned: pinnedField.checked,
+        author: author || '관리자',
+        publishDate,
+        content
+    };
+
+    const existingIndex = staffBoardState.posts.findIndex(post => post.id === postId);
+    if (existingIndex >= 0) {
+        staffBoardState.posts[existingIndex] = nextPost;
+    } else {
+        staffBoardState.posts.push(nextPost);
+    }
+
+    saveStaffBoardPosts(staffBoardState.posts);
+    window.staffBoardState = staffBoardState;
+    renderStaffBoard();
+    closeStaffBoardEditor();
+    if (window._siteSearchIndex) {
+        window._siteSearchIndex = buildSearchIndex();
+    }
+}
+
+function deleteStaffBoardPost() {
+    if (!staffBoardState || !staffBoardState.unlocked) return;
+
+    const idField = document.getElementById('staff-board-id');
+    if (!idField || !idField.value) return;
+
+    const confirmed = confirm('이 게시글을 삭제하시겠습니까?');
+    if (!confirmed) return;
+
+    staffBoardState.posts = staffBoardState.posts.filter(post => post.id !== idField.value);
+    saveStaffBoardPosts(staffBoardState.posts);
+    window.staffBoardState = staffBoardState;
+
+    renderStaffBoard();
+    closeStaffBoardEditor();
+    if (window._siteSearchIndex) {
+        window._siteSearchIndex = buildSearchIndex();
+    }
+}
+
 function openStaffEventEditor(mode = 'create', eventId = null, dateValue = null) {
     if (!staffCalendarState || !staffCalendarState.unlocked) {
         alert('직원 전용 구역은 먼저 잠금을 해제해야 합니다.');
@@ -926,10 +1271,15 @@ function deleteStaffEvent() {
 
 function handleStaffModalEscape(event) {
     const modal = document.getElementById('staff-event-modal');
-    if (!modal || modal.classList.contains('hidden')) return;
+    const boardModal = document.getElementById('staff-board-modal');
 
     if (event.key === 'Escape') {
-        closeStaffEventEditor();
+        if (modal && !modal.classList.contains('hidden')) {
+            closeStaffEventEditor();
+        }
+        if (boardModal && !boardModal.classList.contains('hidden')) {
+            closeStaffBoardEditor();
+        }
     }
 }
 
@@ -1774,6 +2124,18 @@ function buildSearchIndex() {
     if (window.historyProjects) {
         window.historyProjects.forEach((h, i) => {
             index.push({ type: 'history', id: `history-${i}`, title: `${h.client} (${h.year})`, text: h.project });
+        });
+    }
+
+    // Staff board posts
+    if (window.staffBoardState && Array.isArray(window.staffBoardState.posts)) {
+        window.staffBoardState.posts.forEach((post) => {
+            index.push({
+                type: 'staff-board',
+                id: post.id,
+                title: post.title,
+                text: `${post.content || ''} ${post.author || ''} ${getStaffBoardCategoryLabel(post.category)}`
+            });
         });
     }
 

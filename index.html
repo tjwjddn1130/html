@@ -815,9 +815,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-12 space-y-3">
                 <span class="px-3 py-1 text-xs font-semibold text-cyan-300 bg-cyan-500/10 rounded-full uppercase tracking-wider border border-cyan-500/20">Staff Only</span>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-white leading-tight">직원 전용 일정 공유 캘린더</h2>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-white leading-tight">직원 전용 캘린더와 사내 게시판</h2>
                 <div class="w-12 h-1 bg-cyan-400 mx-auto rounded-full"></div>
-                <p class="text-slate-300 font-medium pt-2">큰 행사, 회의, 마감 일정을 한 화면에서 공유하고 내부에서 바로 수정할 수 있는 사내 캘린더입니다.</p>
+                <p class="text-slate-300 font-medium pt-2">캘린더와 사내 게시판을 분리해 일정은 일정답게, 공지는 공지답게 관리할 수 있습니다.</p>
             </div>
 
             <div id="staff-lock-card" class="max-w-3xl mx-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
@@ -841,57 +841,111 @@
                 </div>
             </div>
 
-            <div id="staff-dashboard" class="hidden mt-8 grid grid-cols-1 xl:grid-cols-12 gap-6">
-                <div class="xl:col-span-8 bg-white rounded-3xl border border-slate-200 shadow-2xl text-slate-800 p-6 sm:p-8">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
-                        <div>
-                            <span class="px-3 py-1 text-xs font-semibold text-water-600 bg-water-50 rounded-full uppercase tracking-wider">Shared Calendar</span>
-                            <h3 class="text-2xl font-black text-slate-900 mt-2" id="staff-calendar-month-label">캘린더</h3>
-                            <p class="text-sm text-slate-500 mt-1">월별 일정과 행사, 회의 정보를 한눈에 확인합니다.</p>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-2">
-                            <button onclick="staffChangeMonth(-1)" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition"><i class="fa-solid fa-chevron-left mr-1"></i> 이전</button>
-                            <button onclick="staffGoToToday()" class="px-4 py-2 rounded-xl bg-water-600 text-white font-bold hover:bg-water-700 transition">오늘</button>
-                            <button onclick="staffChangeMonth(1)" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition">다음 <i class="fa-solid fa-chevron-right ml-1"></i></button>
-                            <button onclick="openStaffEventEditor('create')" class="px-4 py-2 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition"><i class="fa-solid fa-plus mr-1.5"></i> 일정 추가</button>
-                        </div>
+            <div id="staff-dashboard" class="hidden mt-8 space-y-6">
+                <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+                    <div class="space-y-2">
+                        <span class="px-3 py-1 text-xs font-semibold text-cyan-300 bg-cyan-500/10 rounded-full uppercase tracking-wider border border-cyan-500/20">Staff Workspace</span>
+                        <h3 class="text-2xl sm:text-3xl font-black text-white">업무에 맞게 분리된 내부 관리 화면</h3>
+                        <p class="text-slate-300 text-sm sm:text-base">캘린더는 일정 중심으로, 게시판은 공지와 자료 공유 중심으로 따로 관리합니다.</p>
                     </div>
-
-                    <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
-                        <div>일</div>
-                        <div>월</div>
-                        <div>화</div>
-                        <div>수</div>
-                        <div>목</div>
-                        <div>금</div>
-                        <div>토</div>
+                    <div class="inline-flex rounded-2xl bg-white/5 border border-white/10 p-1 shadow-lg self-start lg:self-auto">
+                        <button type="button" id="staff-tab-calendar" data-staff-tab="calendar" onclick="switchStaffPanel('calendar')" class="px-4 py-2 rounded-xl text-sm font-bold text-white bg-white/10">캘린더</button>
+                        <button type="button" id="staff-tab-board" data-staff-tab="board" onclick="switchStaffPanel('board')" class="px-4 py-2 rounded-xl text-sm font-bold text-slate-300 hover:text-white transition">사내 게시판</button>
                     </div>
-                    <div id="staff-calendar-grid" class="grid grid-cols-7 gap-2 sm:gap-3"></div>
                 </div>
 
-                <div class="xl:col-span-4 space-y-6">
-                    <div class="bg-gradient-to-br from-water-900 to-slate-950 rounded-3xl p-6 text-white shadow-2xl border border-white/10">
-                        <div class="flex items-center justify-between gap-4 mb-5">
+                <div id="staff-calendar-panel" class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                    <div class="xl:col-span-8 bg-white rounded-3xl border border-slate-200 shadow-2xl text-slate-800 p-6 sm:p-8">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
                             <div>
-                                <span class="text-xs font-bold text-cyan-300 tracking-wider uppercase">Selected Day</span>
-                                <h3 class="text-xl font-black mt-1" id="staff-selected-date-label">날짜를 선택하세요</h3>
+                                <span class="px-3 py-1 text-xs font-semibold text-water-600 bg-water-50 rounded-full uppercase tracking-wider">Shared Calendar</span>
+                                <h3 class="text-2xl font-black text-slate-900 mt-2" id="staff-calendar-month-label">캘린더</h3>
+                                <p class="text-sm text-slate-500 mt-1">월별 일정과 행사, 회의 정보를 한눈에 확인합니다.</p>
                             </div>
-                            <button onclick="openStaffEventEditor('create', null, window.staffCalendarState ? window.staffCalendarState.selectedDate : null)" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 transition text-sm font-bold">현재 날짜에 추가</button>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button onclick="staffChangeMonth(-1)" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition"><i class="fa-solid fa-chevron-left mr-1"></i> 이전</button>
+                                <button onclick="staffGoToToday()" class="px-4 py-2 rounded-xl bg-water-600 text-white font-bold hover:bg-water-700 transition">오늘</button>
+                                <button onclick="staffChangeMonth(1)" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition">다음 <i class="fa-solid fa-chevron-right ml-1"></i></button>
+                                <button onclick="openStaffEventEditor('create')" class="px-4 py-2 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition"><i class="fa-solid fa-plus mr-1.5"></i> 일정 추가</button>
+                            </div>
                         </div>
-                        <div id="staff-day-summary" class="space-y-3 text-sm text-slate-200">
-                            <p class="text-slate-300">캘린더의 날짜를 누르면 해당 일정이 표시됩니다.</p>
+
+                        <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+                            <div>일</div>
+                            <div>월</div>
+                            <div>화</div>
+                            <div>수</div>
+                            <div>목</div>
+                            <div>금</div>
+                            <div>토</div>
+                        </div>
+                        <div id="staff-calendar-grid" class="grid grid-cols-7 gap-2 sm:gap-3"></div>
+                    </div>
+
+                    <div class="xl:col-span-4 space-y-6">
+                        <div class="bg-gradient-to-br from-water-900 to-slate-950 rounded-3xl p-6 text-white shadow-2xl border border-white/10">
+                            <div class="flex items-center justify-between gap-4 mb-5">
+                                <div>
+                                    <span class="text-xs font-bold text-cyan-300 tracking-wider uppercase">Selected Day</span>
+                                    <h3 class="text-xl font-black mt-1" id="staff-selected-date-label">날짜를 선택하세요</h3>
+                                </div>
+                                <button onclick="openStaffEventEditor('create', null, window.staffCalendarState ? window.staffCalendarState.selectedDate : null)" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 transition text-sm font-bold">현재 날짜에 추가</button>
+                            </div>
+                            <div id="staff-day-summary" class="space-y-3 text-sm text-slate-200">
+                                <p class="text-slate-300">캘린더의 날짜를 누르면 해당 일정이 표시됩니다.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 text-slate-800">
+                            <div class="flex items-center justify-between gap-3 mb-4">
+                                <div>
+                                    <h3 class="text-lg font-black text-slate-900">다가오는 일정</h3>
+                                    <p class="text-sm text-slate-500">중요 회의와 행사만 빠르게 확인합니다.</p>
+                                </div>
+                                <button onclick="staffResetCalendar()" class="px-3 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition text-sm">오늘 기준</button>
+                            </div>
+                            <div id="staff-event-list" class="space-y-3"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="staff-board-panel" class="hidden grid grid-cols-1 xl:grid-cols-12 gap-6">
+                    <div class="xl:col-span-4 space-y-6">
+                        <div class="bg-gradient-to-br from-slate-900 via-slate-950 to-water-950 rounded-3xl p-6 text-white shadow-2xl border border-white/10">
+                            <span class="text-xs font-bold text-cyan-300 tracking-wider uppercase">Internal Board</span>
+                            <h3 class="text-2xl font-black mt-2">사내 게시판</h3>
+                            <p class="text-slate-300 text-sm leading-relaxed mt-3">공지, 자료 공유, 설비 메모를 한곳에 모아 내부 전달이 빠르게 되도록 구성했습니다.</p>
+                            <div class="grid grid-cols-2 gap-3 mt-6">
+                                <div class="rounded-2xl bg-white/10 border border-white/10 p-4">
+                                    <div class="text-[11px] uppercase tracking-wider text-slate-300">전체 글</div>
+                                    <div id="staff-board-total-count" class="text-2xl font-black mt-1">0</div>
+                                </div>
+                                <div class="rounded-2xl bg-white/10 border border-white/10 p-4">
+                                    <div class="text-[11px] uppercase tracking-wider text-slate-300">고정 공지</div>
+                                    <div id="staff-board-pinned-count" class="text-2xl font-black mt-1">0</div>
+                                </div>
+                            </div>
+                            <button type="button" onclick="openStaffBoardEditor('create')" class="w-full mt-6 px-4 py-3 rounded-2xl bg-cyan-400 text-slate-950 font-black hover:bg-cyan-300 transition shadow-lg shadow-cyan-500/20">
+                                <i class="fa-solid fa-pen-to-square mr-1.5"></i> 새 게시글 작성
+                            </button>
+                        </div>
+
+                        <div class="bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 text-slate-800">
+                            <h3 class="text-lg font-black text-slate-900">오늘의 공지</h3>
+                            <div id="staff-board-highlight" class="mt-4 space-y-3 text-sm text-slate-600"></div>
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-3xl p-6 shadow-2xl border border-slate-200 text-slate-800">
-                        <div class="flex items-center justify-between gap-3 mb-4">
+                    <div class="xl:col-span-8 bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 text-slate-800">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
                             <div>
-                                <h3 class="text-lg font-black text-slate-900">다가오는 일정</h3>
-                                <p class="text-sm text-slate-500">중요 회의와 행사만 빠르게 확인합니다.</p>
+                                <span class="px-3 py-1 text-xs font-semibold text-water-600 bg-water-50 rounded-full uppercase tracking-wider">Board Feed</span>
+                                <h3 class="text-2xl font-black text-slate-900 mt-2">최근 게시글</h3>
+                                <p class="text-sm text-slate-500 mt-1">고정 공지와 공유 메모를 최신순으로 확인합니다.</p>
                             </div>
-                            <button onclick="staffResetCalendar()" class="px-3 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition text-sm">오늘 기준</button>
+                            <button onclick="openStaffBoardEditor('create')" class="px-4 py-2 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition"><i class="fa-solid fa-plus mr-1.5"></i> 글쓰기</button>
                         </div>
-                        <div id="staff-event-list" class="space-y-3"></div>
+                        <div id="staff-board-list" class="space-y-3"></div>
                     </div>
                 </div>
             </div>
@@ -1272,6 +1326,76 @@
                 <div class="flex flex-col sm:flex-row w-full sm:w-auto gap-3">
                     <button type="button" onclick="closeStaffEventEditor()" class="w-full sm:w-auto px-6 py-3 bg-white border border-slate-200 text-slate-600 font-semibold text-sm rounded-xl hover:bg-slate-50 transition">닫기</button>
                     <button id="staff-event-save-btn" type="button" class="w-full sm:w-auto px-6 py-3 bg-water-600 text-white font-bold text-sm rounded-xl shadow-md hover:bg-water-700 transition">저장</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Staff Board Post Modal -->
+    <div id="staff-board-modal" class="fixed inset-0 z-[110] flex items-center justify-center hidden p-4 sm:p-6 overflow-y-auto">
+        <div onclick="closeStaffBoardEditor()" class="fixed inset-0 modal-overlay bg-slate-950/75 backdrop-blur-sm"></div>
+
+        <div class="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl relative z-10 modal-content border border-slate-100 text-slate-800">
+            <div class="bg-gradient-to-r from-slate-950 to-water-950 px-6 sm:px-8 py-6 text-white relative">
+                <button onclick="closeStaffBoardEditor()" class="absolute top-6 right-6 text-slate-300 hover:text-white transition focus:outline-none">
+                    <i class="fa-solid fa-xmark text-2xl"></i>
+                </button>
+                <span class="text-xs font-bold text-cyan-300 tracking-wider uppercase" id="staff-board-modal-subtitle">Internal Board</span>
+                <h3 class="text-xl sm:text-2xl font-black mt-1" id="staff-board-modal-title">게시글 작성</h3>
+            </div>
+
+            <div class="p-6 sm:p-8 max-h-[74vh] overflow-y-auto">
+                <form id="staff-board-form" class="space-y-5">
+                    <input type="hidden" id="staff-board-id">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="flex flex-col gap-2 md:col-span-2">
+                            <label for="staff-board-title" class="text-sm font-bold text-slate-700">제목</label>
+                            <input id="staff-board-title" type="text" class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:border-water-500 focus:ring-2 focus:ring-water-100 outline-none" placeholder="예: 7월 설비 점검 일정 안내">
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label for="staff-board-category" class="text-sm font-bold text-slate-700">구분</label>
+                            <select id="staff-board-category" class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:border-water-500 focus:ring-2 focus:ring-water-100 outline-none bg-white">
+                                <option value="notice">공지</option>
+                                <option value="memo">메모</option>
+                                <option value="maintenance">점검</option>
+                                <option value="share">자료공유</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label for="staff-board-audience" class="text-sm font-bold text-slate-700">공개 범위</label>
+                            <select id="staff-board-audience" class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:border-water-500 focus:ring-2 focus:ring-water-100 outline-none bg-white">
+                                <option value="all">전체 직원</option>
+                                <option value="team">부서 공유</option>
+                                <option value="internal">내부 참고</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center gap-3 md:col-span-2 rounded-2xl border border-slate-200 px-4 py-3 bg-slate-50">
+                            <input id="staff-board-pinned" type="checkbox" class="w-4 h-4 text-water-600 border-slate-300 rounded focus:ring-water-500 cursor-pointer">
+                            <label for="staff-board-pinned" class="text-sm font-bold text-slate-700 cursor-pointer">상단 고정 공지로 표시</label>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label for="staff-board-author" class="text-sm font-bold text-slate-700">작성자</label>
+                            <input id="staff-board-author" type="text" class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:border-water-500 focus:ring-2 focus:ring-water-100 outline-none" placeholder="예: 생산부 / 조세연">
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label for="staff-board-date" class="text-sm font-bold text-slate-700">게시일</label>
+                            <input id="staff-board-date" type="date" class="w-full rounded-xl border border-slate-200 px-4 py-3 focus:border-water-500 focus:ring-2 focus:ring-water-100 outline-none">
+                        </div>
+                        <div class="flex flex-col gap-2 md:col-span-2">
+                            <label for="staff-board-content" class="text-sm font-bold text-slate-700">내용</label>
+                            <textarea id="staff-board-content" rows="6" class="w-full rounded-2xl border border-slate-200 px-4 py-3 focus:border-water-500 focus:ring-2 focus:ring-water-100 outline-none resize-none" placeholder="공지 내용, 전달 사항, 공유 자료 설명 등을 입력하세요."></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bg-slate-50 px-6 sm:px-8 py-5 flex flex-col sm:flex-row justify-between items-center gap-3 border-t border-slate-100">
+                <button id="staff-board-delete-btn" type="button" class="w-full sm:w-auto px-6 py-3 bg-red-50 text-red-700 font-bold text-sm rounded-xl hover:bg-red-100 transition">
+                    <i class="fa-solid fa-trash-can mr-1.5"></i> 삭제
+                </button>
+                <div class="flex flex-col sm:flex-row w-full sm:w-auto gap-3">
+                    <button type="button" onclick="closeStaffBoardEditor()" class="w-full sm:w-auto px-6 py-3 bg-white border border-slate-200 text-slate-600 font-semibold text-sm rounded-xl hover:bg-slate-50 transition">닫기</button>
+                    <button id="staff-board-save-btn" type="button" class="w-full sm:w-auto px-6 py-3 bg-water-600 text-white font-bold text-sm rounded-xl shadow-md hover:bg-water-700 transition">저장</button>
                 </div>
             </div>
         </div>
